@@ -1,11 +1,21 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Explicit Core Dependencies
+fastapi
+uvicorn
+sqlalchemy
+python-dotenv
+pydantic
+groq
+tenacity
+
+# ML & Vector DB (Heavy dependencies, forcing CPU for PyTorch)
+torch
+sentence-transformers
+chromadb
+
+# Scrapers
 apify-client==1.6.2
 google-play-scraper==1.2.4
 app-store-scraper==0.3.5
-sqlalchemy
-python-dotenv
-chromadb
-sentence-transformers
-torch
 google-api-python-client
-groq
-tenacity
