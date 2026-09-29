@@ -5,7 +5,7 @@ const ProblemLandscape = () => {
   const [clusters, setClusters] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/clusters')
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/clusters`)
       .then(res => res.json())
       .then(data => setClusters(data))
       .catch(err => console.error(err));

@@ -6,7 +6,7 @@ const OpportunityExplorer = () => {
   const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/opportunities')
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/opportunities`)
       .then(res => res.json())
       .then(data => setOpportunities(data))
       .catch(err => console.error(err));

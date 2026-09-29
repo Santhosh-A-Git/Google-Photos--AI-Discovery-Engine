@@ -5,7 +5,7 @@ const MemoryLandscape = () => {
   const [data, setData] = useState({ remembered_items: [], forgotten_items: [], total_insights: 0 });
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/landscape')
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/landscape`)
       .then(res => res.json())
       .then(data => setData(data))
       .catch(err => console.error(err));

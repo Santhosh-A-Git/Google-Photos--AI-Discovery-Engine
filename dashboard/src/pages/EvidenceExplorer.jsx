@@ -5,7 +5,7 @@ const EvidenceExplorer = () => {
   const [insights, setInsights] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/insights')
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/insights`)
       .then(res => res.json())
       .then(data => setInsights(data))
       .catch(err => console.error("Error fetching insights:", err));
@@ -13,7 +13,7 @@ const EvidenceExplorer = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      await fetch(`http://localhost:8000/api/insights/${id}/status`, {
+      await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/insights/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pm_status: status, pm_feedback: "" })

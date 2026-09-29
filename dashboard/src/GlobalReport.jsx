@@ -10,7 +10,7 @@ const GlobalReport = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8000/api/global-report');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/global-report`);
       const data = await response.json();
       if (data.error) {
         setError(data.error);
