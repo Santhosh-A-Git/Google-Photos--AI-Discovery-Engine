@@ -8,6 +8,7 @@ python-dotenv
 pydantic
 groq
 tenacity
+python-multipart
 
 # ML & Vector DB (Heavy dependencies, forcing CPU for PyTorch)
 torch
