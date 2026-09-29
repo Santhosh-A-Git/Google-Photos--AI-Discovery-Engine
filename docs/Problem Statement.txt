@@ -1,0 +1,812 @@
+Google Photos — AI-Powered Discovery Engine
+Detailed Product Problem Statement:
+Project Context
+You are a Product Manager on the Core Experience team at Google Photos.
+Over years of usage, people accumulate thousands of photos, videos, screenshots, documents, receipts, notes, tickets, medical information, travel memories, family moments, and other visual records in Google Photos.
+Finding a recent or precisely described item can be relatively straightforward when the user knows what to search for.
+However, retrieval becomes significantly harder when the user's memory is incomplete.
+A user may remember the experience, context, people, object, or purpose associated with a photo without remembering the exact metadata needed to retrieve it.
+For example:
+"That small café we went to during our Goa trip."
+"The picture of the medicine I took when I was sick last year."
+"The screenshot of that flight ticket I booked."
+"The photo of the dress I wanted to buy."
+"The picture from my cousin's wedding where we were all standing together."
+"That document I photographed a few months ago."
+In each case, the user may be confident that the photo exists while being unable to remember:
+•	When it was taken
+•	Where it was taken
+•	The exact words visible in the image
+•	Which album it belongs to
+•	Who else appears in it
+•	What the object was called
+•	Whether it was a photo, screenshot, scanned document, or video
+•	The exact phrase that would retrieve it through search
+This creates a gap between human memory and machine retrieval.
+________________________________________
+1. Business Objective
+One of Google Photos' strategic goals is:
+Increase the percentage of users who successfully retrieve a photo they remember but cannot precisely describe when they begin searching.
+The goal is not to improve search in general.
+The focus is specifically on:
+Memory-driven retrieval where the user knows the item exists but cannot precisely specify the information needed to find it.
+The product team needs to understand where this retrieval experience breaks down and why before proposing a solution.
+________________________________________
+2. Core Product Problem
+The team currently understands the desired outcome:
+User remembers something → User tries to retrieve it → User may fail to find it.
+However, the underlying problems are not sufficiently understood.
+We do not yet know:
+•	What kinds of visual memories users most commonly struggle to retrieve.
+•	What information users remember when trying to retrieve old photos.
+•	What information they tend to forget.
+•	How people describe memories when they cannot recall exact metadata.
+•	How users translate memories into search queries.
+•	What happens when the first query fails.
+•	How users reformulate searches.
+•	Whether users rely on trial-and-error.
+•	Whether they leave Google Photos and use other sources or external methods.
+•	Whether users browse albums, dates, locations, people, or other organizational structures instead of searching.
+•	Which retrieval problems are widespread versus niche.
+•	Which problems are caused by missing user memory versus limitations in the retrieval experience.
+•	Whether different user segments experience fundamentally different retrieval barriers.
+•	Which problems represent meaningful opportunities to improve successful retrieval.
+Therefore, the first challenge is problem discovery, not feature development.
+________________________________________
+3. Primary Problem Statement
+Formal Problem Statement
+Google Photos users often remember visual information as experiences, contexts, relationships, objects, or purposes rather than as precise searchable attributes. When attempting to retrieve old photos or other visual memories, this incomplete or differently structured memory can make it difficult to formulate an effective search or navigate to the correct item.
+Although users publicly discuss these retrieval difficulties across app reviews, community discussions, Reddit, social platforms, YouTube comments, forums, and other sources, these conversations are unstructured, fragmented, and difficult to analyze systematically at scale.
+The product team therefore lacks an evidence-backed understanding of the distinct retrieval problems users experience, how users remember and describe those memories, where retrieval breaks down, which user segments are affected, and which opportunity areas could most meaningfully improve successful retrieval.
+The challenge is to build an AI-Powered Discovery Engine that analyzes real user conversations at scale and converts them into a structured, traceable, evidence-backed map of retrieval problems and opportunity areas—without inventing, assuming, or overstating evidence at any stage.
+________________________________________
+4. Part 1 — AI-Powered Discovery Engine
+Before proposing any product solution, build an:
+AI-Powered Photo Retrieval Discovery Engine
+The engine should analyze publicly available user conversations related to:
+•	Finding old photos
+•	Searching photos using incomplete memory
+•	Difficulty locating screenshots or documents
+•	Forgetting dates or locations
+•	Forgetting names or exact keywords
+•	Browsing large photo libraries
+•	Search-query failures
+•	Repeated search attempts
+•	Memory-based retrieval
+•	Difficulty recognizing or recalling visual content
+•	Album and organization problems
+•	Retrieval of travel memories
+•	Retrieval of family/event memories
+•	Retrieval of screenshots/documents/receipts
+•	Retrieval of medical or informational photos
+•	Any related visual-memory retrieval experience
+The system may be implemented using AI-native tools and technologies such as:
+•	GPT
+•	Claude
+•	Agents
+•	RAG
+•	n8n
+•	Zapier
+•	Perplexity
+•	Python
+•	Vector databases
+•	Embedding models
+•	LLM-based clustering
+•	Structured databases
+•	Google Antigravity IDE
+•	Any suitable AI/data stack
+The technology is secondary.
+The primary requirement is:
+The system must produce trustworthy discovery insights grounded in real user evidence.
+________________________________________
+5. Discovery Sources
+The discovery engine should analyze multiple independent sources.
+Required / preferred sources
+•	Google Play Store reviews
+•	Apple App Store reviews
+•	Google Photos Help / Community discussions
+•	Reddit discussions
+•	Public social media conversations
+•	YouTube comments
+•	Public forums
+•	Technology communities
+•	Photography communities
+•	Other publicly available discussions about photo retrieval
+Potential search themes may include:
+•	"can't find old photo"
+•	"Google Photos can't find photo"
+•	"forgot when photo was taken"
+•	"how do I find an old picture"
+•	"searching for a photo I remember"
+•	"lost screenshot in Google Photos"
+•	"can't find screenshot"
+•	"can't find document photo"
+•	"Google Photos search doesn't find"
+•	"looking for a picture from trip"
+•	"forgot photo location"
+•	"find photo by memory"
+These are examples, not mandatory fixed queries.
+The discovery engine should be able to expand the vocabulary dynamically based on real evidence.
+________________________________________
+6. Central Discovery Question
+The entire system should ultimately help answer:
+What prevents a user from successfully retrieving a visual memory when they remember the content or context of the photo but cannot precisely describe it?
+This question should be decomposed into several research questions.
+________________________________________
+7. Research Question A — What Are Users Trying to Retrieve?
+Identify the types of visual memories users struggle to retrieve.
+Potential categories may include:
+Travel Memories
+Examples:
+•	Restaurant
+•	Café
+•	Hotel
+•	Landmark
+•	Trip moment
+•	Transportation
+Personal Memories
+Examples:
+•	Family events
+•	Weddings
+•	Birthdays
+•	Friends
+•	Childhood photographs
+Information-Containing Images
+Examples:
+•	Screenshots
+•	Documents
+•	Receipts
+•	Bills
+•	Tickets
+•	Medical information
+•	Notes
+Shopping / Fashion
+Examples:
+•	Product screenshots
+•	Clothing references
+•	Price screenshots
+•	Product pages
+Work / Education
+Examples:
+•	Whiteboards
+•	Documents
+•	Certificates
+•	Slides
+•	Notes
+Everyday Utility
+Examples:
+•	Address
+•	Phone number
+•	Signboard
+•	Product label
+•	Instructions
+The taxonomy should not be assumed to be complete.
+The AI system should be capable of discovering new retrieval categories from the evidence.
+________________________________________
+8. Research Question B — What Does the User Actually Remember?
+This is a critical discovery dimension.
+The engine should identify what types of information users recall about the target item.
+Potential memory attributes include:
+•	Person
+•	Place
+•	Object
+•	Activity
+•	Event
+•	Occasion
+•	Time period
+•	Season
+•	Year
+•	Relative time
+•	Trip
+•	Relationship
+•	Emotion
+•	Visual appearance
+•	Color
+•	Clothing
+•	Context
+•	Purpose
+•	Text seen in image
+•	Device used
+•	Conversation associated with image
+Example:
+A user may not remember:
+"June 14, 2024."
+But may remember:
+"During our Goa trip."
+That distinction is central to the problem.
+The engine should identify:
+What users remember vs. what users do not remember.
+________________________________________
+9. Research Question C — How Do Users Express Their Memory?
+The system should investigate how people formulate retrieval attempts when their memory is incomplete.
+For example, users may think in terms of:
+Context
+"That picture from our Goa trip."
+Relationship
+"The photo where my brother was wearing that blue shirt."
+Event
+"The wedding photo."
+Purpose
+"The screenshot I saved for booking."
+Object
+"The medicine packet photo."
+Approximate time
+"Something from last summer."
+Location
+"That restaurant we went to."
+Visual description
+"The photo with the red car."
+The engine should discover which memory representations recur in real conversations.
+________________________________________
+10. Research Question D — What Information Is Missing?
+For each retrieval problem, the engine should identify what the user does not remember.
+Examples:
+Remembered	Forgotten / Unavailable
+Goa trip	Exact date
+Café	Café name
+Medicine	Exact medicine name
+Wedding	Date
+Friend	Location
+Screenshot	Exact text
+Dress	Brand
+Ticket	Booking date
+Document	Filename
+This distinction is extremely important.
+The product problem may not simply be:
+"Search is bad."
+It may instead be:
+"The user and retrieval system describe the target using different representations."
+That hypothesis must only be raised when supported by evidence.
+________________________________________
+11. Research Question E — Where Does Retrieval Break Down?
+The discovery engine should identify the specific failure point in the user's journey.
+Possible stages:
+Stage 1 — Memory Formation
+The user remembers an experience or visual object.
+Stage 2 — Retrieval Trigger
+The user suddenly needs the old item.
+Stage 3 — Search Formulation
+The user attempts to translate memory into a searchable description.
+Stage 4 — First Retrieval Attempt
+The user performs a search.
+Stage 5 — Result Evaluation
+The user examines results.
+Stage 6 — Search Reformulation
+The user changes keywords or search strategy.
+Stage 7 — Navigation / Browsing
+The user attempts another retrieval method.
+Stage 8 — Abandonment
+The user gives up or uses another source.
+The engine should identify where problems most frequently occur.
+________________________________________
+12. Research Question F — What Happens After a Failed Search?
+This is particularly important.
+A failed first search does not necessarily mean the user immediately abandons the task.
+The user may:
+•	Try another query.
+•	Add a remembered attribute.
+•	Remove a keyword.
+•	Search a person.
+•	Search a place.
+•	Search a date range.
+•	Browse an album.
+•	Scroll chronologically.
+•	Search externally.
+•	Ask another person.
+•	Give up.
+The system should discover these recovery behaviors from real conversations.
+________________________________________
+13. Research Question G — What Are the Distinct Retrieval Problems?
+The AI system must identify problem clusters, not merely topics.
+For example, these are different:
+Problem A — Forgotten Date
+User remembers the event but not when it happened.
+Problem B — Forgotten Entity Name
+User remembers a café/restaurant/person/object but not its name.
+Problem C — Context-Heavy Memory
+User remembers the situation or experience rather than a searchable object.
+Problem D — Information-Dense Image
+User remembers information contained within the image but not the filename or date.
+Problem E — Ambiguous Visual Memory
+User remembers the image visually but lacks a unique identifier.
+Problem F — Search Reformulation Failure
+User knows approximately what they remember but cannot discover the query that retrieves it.
+Problem G — Result Overload
+The target exists among many visually similar results and is difficult to identify.
+These must be treated as candidate problem hypotheses until supported by evidence.
+________________________________________
+14. Discovery Must Go Beyond Sentiment Analysis
+A core requirement of this project is:
+Sentiment analysis is not the objective.
+The engine should not stop at:
+40% negative
+35% positive
+25% neutral
+Similarly, it should not stop at:
+"Users complain about search."
+Instead, it should transform raw evidence into:
+Conversation → User context → Behavior → Problem → Need → Opportunity
+For example:
+Raw Evidence
+User states that they remember a photo from a particular trip but cannot remember the date and cannot locate it through search.
+Structured Interpretation
+Memory: Trip context
+Missing information: Exact date
+Retrieval attempt: Search
+Barrier: Date uncertainty
+Outcome: Retrieval difficulty
+Problem Hypothesis
+Users may struggle when their strongest memory representation is contextual rather than metadata-oriented.
+Opportunity Hypothesis
+There may be an opportunity to support context-based retrieval.
+However:
+The opportunity hypothesis must never be presented as a confirmed user need unless the evidence supports it.
+________________________________________
+15. Evidence-First Architecture
+The engine should treat every AI-generated insight as a claim that requires evidence.
+A conceptual evidence chain should be:
+Source → Conversation → Extracted Evidence → Pattern → Problem → Opportunity
+Every higher-level conclusion must be traceable backward through this chain.
+________________________________________
+16. Anti-Hallucination Requirement
+This is a hard product requirement.
+The AI Discovery Engine must not hallucinate at any stage of the workflow.
+Hallucination includes:
+•	Inventing user quotes.
+•	Inventing reviews.
+•	Inventing Reddit discussions.
+•	Inventing statistics.
+•	Inventing user behavior.
+•	Inventing sources.
+•	Inventing URLs.
+•	Assigning unsupported demographics.
+•	Claiming causality without evidence.
+•	Turning assumptions into facts.
+•	Claiming that a problem is common without sufficient evidence.
+•	Creating synthetic evidence and presenting it as real evidence.
+________________________________________
+17. Evidence Provenance Requirement
+Every extracted insight must have a provenance record.
+At minimum:
+Source
+Source URL / Identifier
+Source type
+Publication date / observed date when available
+Original text
+Relevant excerpt
+Extraction timestamp
+Problem category
+Evidence type
+AI confidence
+Validation status
+The UI should allow the Product Manager to move from:
+Opportunity
+↓
+Problem
+↓
+Evidence cluster
+↓
+Original user conversation
+↓
+Original source
+________________________________________
+18. No Evidence = No Claim
+The system should follow a strict rule:
+If the evidence does not support a claim, the system must not make the claim.
+Instead, it should say:
+•	"Insufficient evidence"
+•	"Evidence is limited"
+•	"Observed in a small number of sources"
+•	"Hypothesis requiring validation"
+•	"No reliable evidence found"
+This behavior is preferable to producing a confident-looking answer.
+________________________________________
+19. No Fabricated Quantification
+The system must never produce:
+"63% of users have this problem"
+unless there is a clearly documented denominator and methodology supporting that figure.
+The engine must distinguish among:
+Measured
+Directly calculated from the collected dataset.
+Estimated
+Derived using a documented methodology.
+Observed
+A pattern seen in the collected evidence but not statistically representative.
+Hypothesized
+A possible interpretation that still requires validation.
+These labels should be visible in the output.
+________________________________________
+20. Quote Integrity
+If the system displays a user quote:
+The quote must exist in the underlying retrieved source.
+The engine should store:
+•	Exact quote
+•	Source
+•	URL/identifier
+•	Surrounding context
+•	Retrieval date
+AI should not rewrite a quote and present the rewritten version as verbatim user language.
+Summaries may be generated, but they must be explicitly labeled as:
+AI-generated summary
+________________________________________
+21. Source Reliability Hierarchy
+Not all evidence should be treated equally.
+The engine should preserve source type and distinguish:
+Direct User Evidence
+Actual review or user-generated discussion.
+Community Discussion
+Multiple users discussing a shared experience.
+Secondary Interpretation
+A third party describing user behavior.
+AI Inference
+An interpretation generated from available evidence.
+The system should never merge these categories without labeling them.
+________________________________________
+22. Evidence Deduplication
+The same underlying complaint may appear:
+•	On multiple websites.
+•	In reposts.
+•	In quoted discussions.
+•	Across syndicated content.
+The engine should attempt to detect duplicate or near-duplicate evidence.
+Otherwise, one original comment could incorrectly appear to represent dozens of independent users.
+Therefore:
+Independent evidence count should be separated from raw mention count.
+________________________________________
+23. Problem Clustering
+The AI system should group evidence into problem clusters.
+Each cluster should contain:
+Problem Name
+A concise description.
+User Situation
+When the problem occurs.
+Remembered Information
+What users appear to remember.
+Missing Information
+What they cannot recall.
+Retrieval Behavior
+What users attempt.
+Failure Point
+Where retrieval breaks down.
+Evidence Count
+Number of relevant evidence items.
+Independent Sources
+Number and types of sources supporting the problem.
+Representative Evidence
+Verified original examples.
+Confidence
+High / Medium / Low, based on predefined evidence rules.
+Open Questions
+What remains uncertain.
+________________________________________
+24. Example Problem Output
+The engine could produce a structured discovery card such as:
+Candidate Problem: Forgotten Temporal Context
+User situation:
+A user remembers a visual memory in relation to an event or period but cannot remember the exact date.
+Remembered:
+Trip, event, season, approximate period.
+Forgotten:
+Specific date.
+Observed retrieval behavior:
+Users attempt broad searches or chronological browsing.
+Evidence:
+Multiple independently sourced conversations describing difficulty finding older photos when the exact date is forgotten.
+Evidence strength:
+Medium.
+Status:
+Candidate problem requiring additional validation.
+Potential opportunity:
+Improve retrieval using contextual temporal memory.
+Important:
+The final opportunity statement must remain a hypothesis until validated through additional research.
+________________________________________
+25. Segment Discovery
+The system should investigate whether different types of users encounter different retrieval problems.
+Possible segments may emerge around:
+•	Frequent vs occasional photo users
+•	Users with very large photo libraries
+•	Users retrieving old content
+•	Users retrieving screenshots
+•	Users retrieving documents
+•	Users retrieving travel memories
+•	Users retrieving personal memories
+•	Users retrieving utility information
+•	Users with highly organized albums
+•	Users relying primarily on search
+•	Users relying primarily on browsing
+These segments should be evidence-derived where possible, rather than invented simply to make the analysis look sophisticated.
+________________________________________
+26. Retrieval Problem Matrix
+The discovery engine should ultimately produce a matrix similar to:
+Retrieval Problem	Evidence Volume	Independent Sources	User Need	Retrieval Failure	Segment Concentration	Evidence Confidence
+Forgot date	Measured	Measured	Temporal recall support	Search formulation	TBD	Medium
+Forgot place/name	Measured	Measured	Entity/context recall	Query mismatch	TBD	High
+Screenshot retrieval	Measured	Measured	Content-based recall	Search/navigation	TBD	Medium
+Visual-only memory	Measured	Measured	Visual/context recall	Query formulation	TBD	Low
+Result overload	Measured	Measured	Result disambiguation	Result evaluation	TBD	Medium
+The actual values must come from the collected evidence.
+The engine must never fill these fields with invented numbers.
+________________________________________
+27. Opportunity Comparison
+This is one of the most important requirements.
+The engine must not simply generate a list of problems.
+It should enable the PM to compare opportunity areas.
+For each opportunity, assess evidence-based dimensions such as:
+1. Problem Prevalence
+How frequently does the problem appear in the collected evidence?
+2. Retrieval Relevance
+How directly does the problem affect the task of finding an existing visual memory?
+3. User Impact
+How severe does the retrieval difficulty appear to be?
+4. Evidence Strength
+How consistently is the problem supported?
+5. Cross-Source Validation
+Does it appear across independent sources?
+6. Segment Reach
+How many identifiable user groups appear affected?
+7. Conversion-to-Retrieval Relevance
+Would solving the issue plausibly improve successful retrieval?
+This should be framed as a prioritization hypothesis, not as proof of causal impact.
+________________________________________
+28. Opportunity Scoring
+A scoring framework may be introduced to make comparison systematic.
+For example:
+Opportunity Score = Prevalence × Impact × Evidence Strength × Retrieval Relevance
+However, the exact scoring formula should be:
+•	Explicit
+•	Configurable
+•	Visible to the user
+•	Supported by underlying evidence
+•	Separated from factual observations
+The system must not make a score appear scientifically objective when the underlying weights are subjective.
+For example:
+Evidence Score: 82/100
+should never be presented without explaining:
+•	What the 82 means.
+•	How it was calculated.
+•	Which evidence contributed.
+•	Which dimensions are subjective.
+________________________________________
+29. Evidence vs Interpretation Model
+Every insight should be separated into four layers.
+Layer 1 — Evidence
+What the user actually said.
+Layer 2 — Pattern
+What is repeatedly observed across evidence.
+Layer 3 — Problem Hypothesis
+What underlying problem may explain the pattern.
+Layer 4 — Opportunity Hypothesis
+What product opportunity could potentially address the problem.
+Example:
+Evidence
+Users describe remembering a trip but forgetting the exact date.
+↓
+Pattern
+Several conversations describe retrieval difficulty under forgotten-date conditions.
+↓
+Problem Hypothesis
+Users may rely more strongly on contextual memories than exact temporal metadata.
+↓
+Opportunity Hypothesis
+A retrieval experience could potentially leverage contextual temporal cues.
+This separation should be visible in the application.
+________________________________________
+30. Discovery Dashboard
+The engine should provide a dashboard that allows a PM to explore:
+Overview
+•	Total sources analyzed
+•	Total relevant conversations
+•	Number of discovered problem clusters
+•	Number of opportunity areas
+•	Evidence confidence distribution
+Problem Landscape
+•	Top recurring retrieval problems
+•	Evidence volume
+•	Cross-platform presence
+•	Confidence
+•	Trend where reliable data exists
+Memory Landscape
+•	What users remember
+•	What users forget
+•	Memory representations
+Retrieval Journey
+•	Search formulation
+•	First attempt
+•	Reformulation
+•	Browsing
+•	Abandonment
+Segment Analysis
+•	Problems by segment
+•	Problems by retrieval type
+•	Problems by content type
+Opportunity Explorer
+•	Opportunity comparison
+•	Evidence strength
+•	Impact indicators
+•	Open questions
+•	Validation status
+________________________________________
+31. Search / Exploration Interface
+The PM should be able to ask questions such as:
+"What are the most common reasons users cannot find old travel photos?"
+"Show evidence for users who remember the event but forget the date."
+"Which retrieval problems appear across Reddit and Google Photos Community?"
+"What information do users remember most often?"
+"What do users do after their first search fails?"
+"Show me the original evidence supporting this problem."
+"Which opportunity areas have strong cross-source evidence?"
+The engine must answer these questions using retrieved evidence, not free-form model knowledge.
+________________________________________
+32. RAG / Grounding Requirement
+For analytical responses, the system should use retrieval-grounded generation.
+Conceptually:
+Question
+↓
+Retrieve relevant evidence
+↓
+Filter / rank evidence
+↓
+Generate structured answer
+↓
+Attach citations
+↓
+Run evidence validation
+↓
+Return answer
+The model should not be permitted to answer substantive discovery questions purely from its pretrained knowledge.
+________________________________________
+33. Claim Verification Layer
+A separate validation layer should check generated outputs.
+For each generated claim:
+Claim
+↓
+Find supporting evidence
+↓
+Check evidence relevance
+↓
+Check evidence count
+↓
+Check source validity
+↓
+Check whether claim exceeds evidence
+↓
+Approve / Flag / Reject
+Potential statuses:
+SUPPORTED
+Evidence adequately supports the claim.
+PARTIALLY SUPPORTED
+Evidence exists but does not fully justify the wording.
+UNSUPPORTED
+Evidence cannot be located.
+CONTRADICTED
+Evidence contains meaningful conflicting signals.
+INSUFFICIENT EVIDENCE
+There is not enough evidence to make the claim reliably.
+________________________________________
+34. Hallucination Guardrails
+The implementation should include explicit guardrails.
+Guardrail 1 — Citation Mandatory
+Analytical claims require supporting evidence.
+Guardrail 2 — Citation Validation
+The cited evidence must actually support the claim.
+Guardrail 3 — No Source, No Claim
+Unsupported claims must be rejected or downgraded to hypotheses.
+Guardrail 4 — Exact Quote Verification
+Quoted text must match source text.
+Guardrail 5 — No Fake Statistics
+Numbers must originate from computation over the actual dataset.
+Guardrail 6 — Uncertainty Labels
+The system must expose uncertainty.
+Guardrail 7 — Source-Level Traceability
+Every insight must lead back to source material.
+Guardrail 8 — Independent Evidence Detection
+Repeated copies must not be counted as independent users.
+Guardrail 9 — Temporal Awareness
+The source date must be preserved whenever available.
+Guardrail 10 — Model Knowledge Isolation
+The LLM must not silently substitute general knowledge for missing evidence.
+________________________________________
+35. Failure Behavior
+The engine should be intentionally conservative.
+When it cannot answer confidently, it should say:
+"The available evidence is insufficient to establish this pattern."
+When it finds only a small number of examples:
+"This pattern appears in a limited number of collected conversations and should not yet be treated as a widespread problem."
+When evidence conflicts:
+"The evidence is mixed. Some conversations indicate X, while others indicate Y."
+When a conclusion is an interpretation:
+"Hypothesis based on the observed evidence."
+This is a core product behavior, not an error condition.
+________________________________________
+36. What the Engine Should NOT Do
+The discovery engine should not:
+•	Invent user research.
+•	Invent interviews.
+•	Invent statistics.
+•	Invent quotes.
+•	Invent sources.
+•	Use synthetic reviews as evidence.
+•	Treat AI-generated examples as real users.
+•	Assume the user problem before analysis.
+•	Start with a feature and work backward.
+•	Treat sentiment as the primary insight.
+•	Equate complaint frequency with business impact.
+•	Assume causation from correlation.
+•	Produce arbitrary opportunity scores.
+•	Hide uncertainty.
+•	Present model knowledge as research evidence.
+________________________________________
+37. Non-Goals
+This project is not intended to:
+•	Rebuild Google Photos search.
+•	Build the final retrieval feature.
+•	Improve search ranking immediately.
+•	Build a new UI.
+•	Build an AI assistant immediately.
+•	Optimize generic search relevance.
+•	Implement personalized search yet.
+•	Build a notification strategy.
+•	Run experiments on users yet.
+•	Solve every photo-management problem.
+•	Treat all Google Photos search complaints as relevant.
+The immediate objective is:
+Discover, structure, compare, and prioritize the underlying retrieval problems.
+________________________________________
+38. Expected Final Output
+At the end of the discovery phase, the Product Manager should have:
+A. Evidence Repository
+A structured repository of relevant user conversations.
+B. Memory Model
+An evidence-backed understanding of what users remember and forget.
+C. Retrieval Journey Model
+A map of how users attempt retrieval and where breakdowns occur.
+D. Problem Taxonomy
+A set of distinct retrieval problems derived from user evidence.
+E. Segment Analysis
+Understanding of which user/content segments experience which problems.
+F. Opportunity Landscape
+A comparison of potential opportunity areas.
+G. Evidence Traceability
+Every important insight linked to original evidence.
+H. Validation Backlog
+A list of hypotheses that require further interviews, surveys, behavioral analysis, or experiments.
+________________________________________
+39. Definition of Done
+The AI Discovery Engine should be considered successful when a Product Manager can select any major discovered problem and answer:
+What is the problem?
+Who experiences it?
+What are they trying to retrieve?
+What do they remember?
+What have they forgotten?
+How do they attempt retrieval?
+Where does retrieval fail?
+How frequently is the pattern observed?
+How many independent sources support it?
+What original user evidence supports the conclusion?
+What are the limitations of the evidence?
+What opportunity might address it?
+What remains unvalidated?
+And importantly:
+Every factual statement can be traced back to evidence.
+________________________________________
+40. Final Product Challenge
+Build an AI-Powered Discovery Engine that can transform real-world conversations about Google Photos retrieval into an evidence-backed understanding of how people remember visual information, where memory-driven retrieval breaks down, which distinct retrieval problems exist, and which opportunity areas deserve further product investigation.**
+The system must go beyond review summaries and sentiment analysis.
+It must:
+Discover → Structure → Quantify → Compare → Prioritize
+while maintaining:
+Evidence → Traceability → Uncertainty → Verification
+throughout the entire workflow.
+________________________________________
+41. One-Line Challenge Definition
+Build an AI-powered discovery engine that identifies, quantifies, and compares memory-driven photo retrieval problems using real user evidence—without hallucinating, inventing evidence, or assuming the solution before the problem is validated.
+________________________________________
+
+42. Core Product Philosophy
+The project should follow one principle throughout:
+Do not ask the AI "What feature should Google Photos build?"
+Ask:
+"What are users actually struggling to retrieve, how do we know, how widespread is the problem, and what evidence suggests it is worth solving?"
+Only after that discovery work should the Product Manager move into:
+Problem Validation → Opportunity Definition → Solution Discovery → Prototyping → Experimentation

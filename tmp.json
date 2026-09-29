@@ -1,0 +1,32 @@
+[
+  [
+    "Difficulty Finding Specific Photos Across Fragmented Storage and Inconsistent UI",
+    434,
+    5,
+    "HIGH"
+  ],
+  [
+    "Unreliable Photo Retrieval Across Updated UI and Search Features",
+    140,
+    3,
+    "HIGH"
+  ],
+  [
+    "Inconsistent Search for Unbacked\u2011up or Locally Stored Photos",
+    44,
+    2,
+    "HIGH"
+  ],
+  [
+    "Search Functionality Fails to Retrieve Desired Photos",
+    62,
+    3,
+    "HIGH"
+  ],
+  [
+    "Difficulty locating specific photos because the library\u2019s chronological organization and UI cues are inconsistent",
+    273,
+    4,
+    "HIGH"
+  ]
+]
