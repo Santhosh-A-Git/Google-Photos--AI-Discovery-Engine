@@ -84,6 +84,3 @@ The system is built end-to-end to be robust and fail-safe:
 - The backend wraps all endpoints in comprehensive `try...except` blocks, returning fallback schemas on failure instead of 500 crashes.
 - The AI Integration features self-healing JSON parsers that can interpret unstructured LLM outputs.
 - The UI handles undefined states, failed fetches, and missing data gracefully without interrupting the user experience.
-
----
-*Created as part of a PM-Next Leap Graduation Project.*
