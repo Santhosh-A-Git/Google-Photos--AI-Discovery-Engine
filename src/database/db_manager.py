@@ -5,13 +5,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.database.models import Base
 
-# Determine database path. Look for Railway's Postgres URL first, default to local SQLite.
-DATABASE_URL = os.getenv('DATABASE_URL', os.getenv('DB_PATH', 'sqlite:///ingestion.db'))
-# Railway's postgres URL starts with postgres://, but sqlalchemy requires postgresql://
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-
-DB_PATH = DATABASE_URL
+# Force local SQLite database so it uses the pre-populated data from GitHub
+DB_PATH = 'sqlite:///ingestion.db'
 
 engine = create_engine(DB_PATH, echo=False)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
