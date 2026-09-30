@@ -7,7 +7,7 @@ const EvidenceExplorer = () => {
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/insights`)
       .then(res => res.json())
-      .then(data => setInsights(data))
+      .then(data => setInsights(Array.isArray(data) ? data : []))
       .catch(err => console.error("Error fetching insights:", err));
   }, []);
 

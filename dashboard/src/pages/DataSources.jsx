@@ -41,7 +41,7 @@ const DataSources = () => {
                     label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                     labelLine={false}
                   >
-                    {stats.sources.map((entry, index) => (
+                    {(stats.sources || []).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>

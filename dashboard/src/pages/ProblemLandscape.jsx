@@ -11,7 +11,7 @@ const ProblemLandscape = () => {
       .catch(err => console.error(err));
   }, []);
 
-  const sortedClusters = [...clusters].sort((a, b) => parseFloat(b.priority_score) - parseFloat(a.priority_score));
+  const sortedClusters = Array.isArray(clusters) ? [...clusters].sort((a, b) => parseFloat(b.priority_score) - parseFloat(a.priority_score)) : [];
 
   return (
     <div className="p-8 max-w-7xl mx-auto">

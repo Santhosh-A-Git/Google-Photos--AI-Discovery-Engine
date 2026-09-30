@@ -84,7 +84,7 @@ def run_inference_pipeline():
             opportunity_area=result_json.get("opportunity_area"),
             affected_segment=result_json.get("affected_segment"),
             validation_status=result_json.get("validation_status", "PENDING"),
-            exact_quote=result_json.get("exact_quote", "")
+            exact_quote=result_json.get("exact_quote") or ""
         )
         
         session.add(insight)

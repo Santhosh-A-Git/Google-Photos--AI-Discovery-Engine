@@ -20,6 +20,7 @@ import OpportunityExplorer from './pages/OpportunityExplorer';
 import PMQueries from './pages/PMQueries';
 import InterviewHypotheses from './pages/InterviewHypotheses';
 import DashboardHeader from './components/DashboardHeader';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   const navItems = [
@@ -82,22 +83,24 @@ function App() {
         </aside>
 
         {/* Main Content Area */}
+        <ErrorBoundary>
         <main className="flex-1 overflow-y-auto bg-white/90 backdrop-blur-3xl z-10 shadow-[-10px_0_30px_rgba(0,0,0,0.05)] m-0 overflow-hidden relative flex flex-col">
           <DashboardHeader />
           <div className="flex-1 overflow-y-auto">
-            <Routes>
-            <Route path="/" element={<Navigate to="/queries" replace />} />
-            <Route path="/queries" element={<PMQueries />} />
-            <Route path="/sources" element={<DataSources />} />
-            <Route path="/landscape" element={<MemoryLandscape />} />
-            <Route path="/journey" element={<RetrievalJourney />} />
-            <Route path="/evidence" element={<EvidenceExplorer />} />
-            <Route path="/problems" element={<ProblemLandscape />} />
-            <Route path="/opportunities" element={<OpportunityExplorer />} />
-            <Route path="/hypotheses" element={<InterviewHypotheses />} />
-            </Routes>
+              <Routes>
+              <Route path="/" element={<Navigate to="/queries" replace />} />
+              <Route path="/queries" element={<PMQueries />} />
+              <Route path="/sources" element={<DataSources />} />
+              <Route path="/landscape" element={<MemoryLandscape />} />
+              <Route path="/journey" element={<RetrievalJourney />} />
+              <Route path="/evidence" element={<EvidenceExplorer />} />
+              <Route path="/problems" element={<ProblemLandscape />} />
+              <Route path="/opportunities" element={<OpportunityExplorer />} />
+              <Route path="/hypotheses" element={<InterviewHypotheses />} />
+              </Routes>
           </div>
         </main>
+        </ErrorBoundary>
       </div>
     </BrowserRouter>
   );

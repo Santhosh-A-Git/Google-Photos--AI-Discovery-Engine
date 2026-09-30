@@ -30,12 +30,12 @@ export default function DashboardHeader() {
   }, []);
 
   const getScopeCount = (status) => {
-    const scope = stats.scopes.find(s => s.name === status);
+    const scope = (stats.scopes || []).find(s => s.name === status);
     return scope ? scope.value : 0;
   };
 
   const getOutcomeCount = (outcome) => {
-    const out = stats.outcomes.find(o => o.name === outcome);
+    const out = (stats.outcomes || []).find(o => o.name === outcome);
     return out ? out.value : 0;
   };
 

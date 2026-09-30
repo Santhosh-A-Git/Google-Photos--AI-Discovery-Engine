@@ -98,12 +98,21 @@ def get_stats():
             func.count(Insight.id).label('count')
         ).group_by(Insight.failure_type).order_by(func.count(Insight.id).desc()).all()
 
+        # Sources breakdown for backwards compatibility
+        sources_data = session.query(
+            Conversation.source, 
+            func.count(Conversation.id).label('count')
+        ).group_by(Conversation.source).all()
+        
         return {
             "total_raw_records": total_raw,
+            "total_conversations": total_raw,
             "total_insights_extracted": total_insights,
+            "total_insights": total_insights,
             "scopes": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in scopes],
             "outcomes": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in outcomes],
-            "failures": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in failures]
+            "failures": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in failures],
+            "sources": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in sources_data]
         }
     except Exception as e:
         print(f"Error in get_stats: {e}")
