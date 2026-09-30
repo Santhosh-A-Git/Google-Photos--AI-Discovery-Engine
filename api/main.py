@@ -34,12 +34,22 @@ class StatusUpdate(BaseModel):
     pm_status: str
     pm_feedback: str = ""
 
+import json
+
 @app.get("/api/global-report")
 def get_global_report():
+    cache_file = "global_report_cache.json"
+    if os.path.exists(cache_file):
+        try:
+            with open(cache_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except:
+            pass
+
     session = SessionLocal()
     try:
         # Only query a sample of IN_SCOPE insights to prevent exceeding LLM context and truncating JSON
-        insights = session.query(Insight).filter(Insight.scope_status == "IN_SCOPE").limit(30).all()
+        insights = session.query(Insight).filter(Insight.scope_status == "IN_SCOPE").limit(10).all()
         if not insights:
             return {
                 "in_scope_scenarios": "No in-scope insights available yet.",
@@ -60,7 +70,14 @@ def get_global_report():
             "outcome": i.retrieval_outcome
         } for i in insights]
         
-        return generate_global_report(data)
+        report = generate_global_report(data)
+        
+        # Cache it to avoid rate limits on subsequent clicks
+        if report and "Error" not in report.get("in_scope_scenarios", ""):
+            with open(cache_file, "w", encoding="utf-8") as f:
+                json.dump(report, f, indent=2)
+                
+        return report
     except Exception as e:
         print(f"Error in get_global_report: {e}")
         return {
