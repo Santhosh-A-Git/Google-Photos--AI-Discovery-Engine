@@ -118,7 +118,6 @@ EVIDENCE INTEGRITY RULE (CRITICAL):
 OUTPUT FORMAT:
 You MUST structure your response exactly like this (use Markdown):
 
-### EXECUTIVE SUMMARY
 [Directly and clearly answer the user's query in 2-3 sentences based on the evidence. Explain the 'why' behind the pattern.]
 
 ### PRIMARY RETRIEVAL PATTERN
