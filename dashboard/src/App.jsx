@@ -3,11 +3,11 @@ import { BrowserRouter, Routes, Route, NavLink, Navigate } from 'react-router-do
 import { 
   Database, 
   Search, 
-  Brain, 
   GitMerge, 
   Layers, 
   Lightbulb,
-  Bot
+  Bot,
+  UserCheck
 } from 'lucide-react';
 
 // Pages
@@ -18,15 +18,19 @@ import RetrievalJourney from './pages/RetrievalJourney';
 import ProblemLandscape from './pages/ProblemLandscape';
 import OpportunityExplorer from './pages/OpportunityExplorer';
 import PMQueries from './pages/PMQueries';
+import InterviewHypotheses from './pages/InterviewHypotheses';
+import DashboardHeader from './components/DashboardHeader';
 
 function App() {
   const navItems = [
     { path: '/queries', name: 'AI PM Assistant', icon: <Bot size={20} />, activeColor: 'bg-blue-50 text-blue-700 border-l-4 border-blue-500' },
     { path: '/sources', name: 'Data Sources', icon: <Database size={20} />, activeColor: 'bg-red-50 text-red-700 border-l-4 border-red-500' },
-    { path: '/landscape', name: 'Memory & Retrieval Journey', icon: <GitMerge size={20} />, activeColor: 'bg-yellow-50 text-yellow-700 border-l-4 border-yellow-500' },
+    { path: '/landscape', name: 'Memory Landscape', icon: <GitMerge size={20} />, activeColor: 'bg-yellow-50 text-yellow-700 border-l-4 border-yellow-500' },
+    { path: '/journey', name: 'Retrieval Journey', icon: <Search size={20} />, activeColor: 'bg-emerald-50 text-emerald-700 border-l-4 border-emerald-500' },
     { path: '/evidence', name: 'Evidence Explorer', icon: <Search size={20} />, activeColor: 'bg-green-50 text-green-700 border-l-4 border-green-500' },
     { path: '/problems', name: 'Problem Landscape', icon: <Layers size={20} />, activeColor: 'bg-blue-50 text-blue-700 border-l-4 border-blue-500' },
-    { path: '/opportunities', name: 'Opportunity Explorer', icon: <Lightbulb size={20} />, activeColor: 'bg-red-50 text-red-700 border-l-4 border-red-500' }
+    { path: '/opportunities', name: 'Opportunity Explorer', icon: <Lightbulb size={20} />, activeColor: 'bg-red-50 text-red-700 border-l-4 border-red-500' },
+    { path: '/hypotheses', name: 'Interview Hypotheses', icon: <UserCheck size={20} />, activeColor: 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' }
   ];
 
   return (
@@ -49,14 +53,8 @@ function App() {
                 <span className="bg-gradient-to-r from-[#4285F4] to-[#EA4335] text-transparent bg-clip-text">Discovery </span>
                 <span className="text-slate-800">Engine</span>
               </h1>
-              <div className="text-[11px] font-black tracking-[0.2em] mt-1">
-                <span className="text-[#4285F4]">G</span>
-                <span className="text-[#EA4335]">O</span>
-                <span className="text-[#FBBC05]">O</span>
-                <span className="text-[#4285F4]">G</span>
-                <span className="text-[#34A853]">L</span>
-                <span className="text-[#EA4335]">E</span>
-                <span className="text-slate-500 ml-1">PHOTOS</span>
+              <div className="text-[10px] font-black tracking-[0.1em] mt-1 text-slate-500 uppercase">
+                Vague-Memory Retrieval
               </div>
             </div>
           </div>
@@ -84,16 +82,21 @@ function App() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-white/90 backdrop-blur-3xl z-10 shadow-[-10px_0_30px_rgba(0,0,0,0.05)] m-0 overflow-hidden relative">
-          <Routes>
+        <main className="flex-1 overflow-y-auto bg-white/90 backdrop-blur-3xl z-10 shadow-[-10px_0_30px_rgba(0,0,0,0.05)] m-0 overflow-hidden relative flex flex-col">
+          <DashboardHeader />
+          <div className="flex-1 overflow-y-auto">
+            <Routes>
             <Route path="/" element={<Navigate to="/queries" replace />} />
             <Route path="/queries" element={<PMQueries />} />
             <Route path="/sources" element={<DataSources />} />
             <Route path="/landscape" element={<MemoryLandscape />} />
+            <Route path="/journey" element={<RetrievalJourney />} />
             <Route path="/evidence" element={<EvidenceExplorer />} />
             <Route path="/problems" element={<ProblemLandscape />} />
             <Route path="/opportunities" element={<OpportunityExplorer />} />
-          </Routes>
+            <Route path="/hypotheses" element={<InterviewHypotheses />} />
+            </Routes>
+          </div>
         </main>
       </div>
     </BrowserRouter>

@@ -1,84 +1,107 @@
 import React, { useEffect, useState } from 'react';
-import { GitMerge } from 'lucide-react';
+import { GitMerge, Users, MapPin, Calendar, CalendarRange, Box, Image as ImageIcon } from 'lucide-react';
 
 const MemoryLandscape = () => {
-  const [data, setData] = useState({ remembered_items: [], forgotten_items: [], total_insights: 0 });
+  const [data, setData] = useState({
+    people_remembered: [],
+    place_remembered: [],
+    time_remembered: [],
+    event_remembered: [],
+    object_remembered: [],
+    visuals_remembered: [],
+    total_in_scope: 0
+  });
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/landscape`)
       .then(res => res.json())
-      .then(data => setData(data))
+      .then(d => setData(d))
       .catch(err => console.error(err));
   }, []);
 
+  const DimensionCard = ({ title, icon, items, colorClass }) => (
+    <div className={`bg-white rounded-xl p-6 border shadow-sm ${colorClass}`}>
+      <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+        {icon}
+        {title}
+      </h2>
+      <div className="space-y-2 overflow-y-auto custom-scrollbar pr-2" style={{maxHeight: '200px'}}>
+        {items && items.length > 0 ? (
+          items.map((item, idx) => (
+            <div key={idx} className="bg-slate-50 p-2 rounded-lg text-sm border border-slate-100 text-slate-700">
+              "{item}"
+            </div>
+          ))
+        ) : (
+          <div className="text-slate-400 text-sm italic">No data extracted yet.</div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
-    <div className="p-8 max-w-7xl mx-auto h-full flex flex-col">
+    <div className="p-8 max-w-7xl mx-auto h-full flex flex-col pb-20">
       <h1 className="text-3xl font-bold text-slate-900 mb-2 flex items-center gap-3">
         <GitMerge color="#FBBC05" size={32} />
-        Memory Landscape
+        Memory Landscape (In-Scope Only)
       </h1>
-      <p className="text-slate-900 font-medium mb-8 text-lg">What users remember vs. what they forget when retrieving visual memories.</p>
-      
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-yellow-600 mb-3">Retrieval Journey (Drop-off Funnel)</h2>
-        <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <div className="flex flex-col items-center max-w-2xl mx-auto">
-            {/* Funnel Steps */}
-            <div className="w-full bg-slate-50 py-2 px-4 rounded-lg text-center relative z-10 border border-slate-200 shadow-sm">
-              <h3 className="font-bold text-yellow-600 text-base">Memory Trigger</h3>
-              <p className="text-xs text-slate-600">User remembers a visual moment but needs the photo.</p>
-            </div>
-            
-            <div className="h-4 w-1 bg-slate-200"></div>
-            
-            <div className="w-5/6 bg-slate-50 py-2 px-4 rounded-lg text-center relative z-10 border border-slate-200 shadow-sm">
-              <h3 className="font-bold text-yellow-600 text-base">Search Attempt</h3>
-              <p className="text-xs text-slate-600">User formulates a search based on partial memory (e.g. location, object).</p>
-            </div>
-            
-            <div className="h-4 w-1 bg-slate-200"></div>
-            
-            <div className="w-4/6 bg-slate-50 py-2 px-4 rounded-lg text-center relative z-10 border border-slate-200 shadow-sm">
-              <h3 className="font-bold text-yellow-700 text-base">Failure Point</h3>
-              <p className="text-xs text-slate-600">System fails to match the partial memory string to the correct image.</p>
-            </div>
-            
-            <div className="h-4 w-1 bg-slate-200"></div>
-            
-            <div className="w-3/6 bg-white py-2 px-4 rounded-lg text-center relative z-10 border border-slate-300 shadow-sm">
-              <h3 className="font-bold text-yellow-700 text-base">Outcome: Abandonment</h3>
-              <p className="text-xs text-slate-500">User gives up scrolling or searching.</p>
-            </div>
-          </div>
-        </div>
+      <p className="text-slate-900 font-medium mb-8 text-lg">Analysis of {data.total_in_scope} vague-memory retrievals showing what users remember across 6 dimensions.</p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <DimensionCard 
+          title="People" 
+          icon={<Users size={20} className="text-blue-500" />} 
+          items={data.people_remembered} 
+          colorClass="border-blue-200" 
+        />
+        <DimensionCard 
+          title="Place / Location" 
+          icon={<MapPin size={20} className="text-rose-500" />} 
+          items={data.place_remembered} 
+          colorClass="border-rose-200" 
+        />
+        <DimensionCard 
+          title="Time (Approximate)" 
+          icon={<Calendar size={20} className="text-amber-500" />} 
+          items={data.time_remembered} 
+          colorClass="border-amber-200" 
+        />
+        <DimensionCard 
+          title="Event / Occasion" 
+          icon={<CalendarRange size={20} className="text-emerald-500" />} 
+          items={data.event_remembered} 
+          colorClass="border-emerald-200" 
+        />
+        <DimensionCard 
+          title="Object / Subject" 
+          icon={<Box size={20} className="text-indigo-500" />} 
+          items={data.object_remembered} 
+          colorClass="border-indigo-200" 
+        />
+        <DimensionCard 
+          title="Visual Characteristics" 
+          icon={<ImageIcon size={20} className="text-pink-500" />} 
+          items={data.visuals_remembered} 
+          colorClass="border-pink-200" 
+        />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
-        <div className="bg-teal-50 rounded-xl p-6 border border-teal-100 flex flex-col shadow-inner">
-          <h2 className="text-2xl font-bold text-teal-700 mb-4 flex items-center gap-2 tracking-wide">
-            <span>🧠</span> What Users Remember
-          </h2>
-          <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar" style={{maxHeight: '400px'}}>
-            {data.remembered_items.map((item, idx) => (
-              <div key={idx} className="bg-white p-4 rounded-xl shadow-sm text-slate-800 border border-slate-200">
-                {item}
-              </div>
-            ))}
-            {data.remembered_items.length === 0 && <div className="text-slate-500 font-medium">No data available</div>}
+      <div className="mt-8 bg-slate-50 p-6 rounded-xl border border-slate-200">
+        <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <span>🧠</span> What Users Universally Forget
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
+            <h3 className="font-bold text-slate-700">Exact Dates</h3>
+            <p className="text-sm text-slate-500 mt-1">Users rarely remember the exact month or year, leading to failure when scrolling timeline.</p>
           </div>
-        </div>
-        
-        <div className="bg-red-50 rounded-xl p-6 border border-red-100 flex flex-col shadow-inner">
-          <h2 className="text-2xl font-bold text-red-700 mb-4 flex items-center gap-2 tracking-wide">
-            <span>❓</span> What Users Forget
-          </h2>
-          <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar" style={{maxHeight: '400px'}}>
-            {data.forgotten_items.map((item, idx) => (
-              <div key={idx} className="bg-white p-4 rounded-xl shadow-sm text-slate-800 border border-slate-200 hover:border-slate-300 transition-colors">
-                {item}
-              </div>
-            ))}
-            {data.forgotten_items.length === 0 && <div className="text-slate-500 font-medium">No data available</div>}
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
+            <h3 className="font-bold text-slate-700">Specific Albums</h3>
+            <p className="text-sm text-slate-500 mt-1">Users forget if the photo was ever added to a named album, rendering album navigation useless.</p>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
+            <h3 className="font-bold text-slate-700">Filenames / Searchable Tags</h3>
+            <p className="text-sm text-slate-500 mt-1">Users do not know the exact textual tags the system requires (e.g. "Receipt" vs "Bill").</p>
           </div>
         </div>
       </div>

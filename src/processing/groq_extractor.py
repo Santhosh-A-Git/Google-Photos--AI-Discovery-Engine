@@ -9,30 +9,61 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 load_dotenv()
 
-SYSTEM_PROMPT = """You are a strict data extraction AI for a product management research team.
-Your job is to analyze user feedback about Google Photos and uncover deep retrieval analytics.
+SYSTEM_PROMPT = """You are a rigorous data extraction AI for Google Photos Product Managers.
+Your job is to analyze user feedback and extract structured deep retrieval analytics focusing specifically on "VAGUE-MEMORY PHOTO RETRIEVAL".
 
 RULES:
 1. You MUST output ONLY valid JSON.
-2. The JSON must have EXACTLY these keys: "retrieval_struggle", "remembered_info", "forgotten_info", "search_formulation", "opportunity_area", and "exact_quote".
-3. CONTEXT FILTER: The review MUST be about searching, finding, retrieving, organizing, or discovering old photos/videos. If it is about something else (e.g., pricing, backup issues, storage limits, crashing, editing features), you MUST return `null` for ALL fields EXCEPT exact_quote, which should be an empty string "".
-4. ZERO HALLUCINATION. The "exact_quote" MUST be a verbatim substring copied and pasted directly from the user's raw text. Do not summarize, do not fix grammar, do not add punctuation. If you cannot find a relevant quote, output an empty string for exact_quote.
-5. If a specific field cannot be deduced from the text, return `null` for that field. Do NOT guess.
-6. "retrieval_struggle": A short phrase describing what kind of old photos they struggle to retrieve (e.g., "Finding specific event photos from years ago").
-7. "remembered_info": What the user actually remembers about the photo (e.g., "The year, the general location, the people in it").
-8. "forgotten_info": What the user has forgotten (e.g., "The exact date, the album name").
-9. "search_formulation": How they tried to search for it (e.g., "Scrolled endlessly through timeline instead of using search bar").
-10. "opportunity_area": A 2-5 word product feature opportunity (e.g., "NLP search for events", "Timeline Visual Scrubber", "Contextual Tagging").
+2. The JSON must contain ALL keys defined in the schema below. If a field cannot be deduced from the text, return `null`. Do NOT guess.
+3. CONTEXT FILTER: The review MUST be about finding, retrieving, or discovering old photos/videos. If it is about something else (e.g., pricing, backup), set `scope_status` to "OUT_OF_SCOPE" or "ADJACENT". 
+4. ZERO HALLUCINATION. The "exact_quote" MUST be a verbatim substring copied directly from the text.
+5. `failure_type` must be one of: "MEMORY -> QUERY TRANSLATION", "CLUE DISAMBIGUATION FAILURE", "QUERY -> RETRIEVAL FAILURE", "RETRIEVAL -> RECOGNITION FAILURE", "SEARCH RECOVERY FAILURE", "CROSS-MODAL MEMORY FAILURE".
+6. `result_status` must be one of: "FOUND", "FOUND_AFTER_REFINEMENT", "NOT_FOUND", "ABANDONED", "FOUND_USING_WORKAROUND", "UNKNOWN".
+7. `evidence_strength` must be one of: "HIGH", "MEDIUM", "LOW".
 
-EXAMPLE OUTPUT:
-{
-  "retrieval_struggle": "Finding old screenshots of recipes",
-  "remembered_info": "It was a screenshot of a recipe from last year",
-  "forgotten_info": "The exact date it was taken",
-  "search_formulation": "Tried searching 'recipe' but got food photos instead of screenshots",
-  "opportunity_area": "OCR Screenshot Filtering",
-  "exact_quote": "I hate how hard it is to find old screenshots of recipes. I search recipe and it shows my dinner plates!"
-}
+SCHEMA KEYS TO EXTRACT:
+"scope_status": "IN_SCOPE" (vague memory retrieval), "ADJACENT" (storage/fragmentation), or "OUT_OF_SCOPE" (backup/deletion).
+"scope_reason": Short reason for classification.
+"scope_confidence": "HIGH", "MEDIUM", "LOW".
+"retrieval_scenario": Description of the retrieval attempt.
+"photo_type": e.g., "screenshot", "event photo".
+"context_type": e.g., "travel", "work".
+"remembered_clues": What they remembered.
+"forgotten_clues": What they forgot.
+"approximate_time": e.g., "last summer".
+"remembered_place": e.g., "Goa".
+"remembered_people": e.g., "brother".
+"remembered_event": e.g., "wedding".
+"remembered_object": e.g., "medicine".
+"remembered_visual_attributes": e.g., "blue bag".
+"remembered_text": Any text they remember.
+"remembered_relationship": Contextual relation.
+"initial_search_query": What they typed first.
+"search_mode": "keyword", "timeline", "albums".
+"search_strategy": Strategy used.
+"search_attempt_number": e.g., "1", "multiple".
+"refinement_attempt": What they did next.
+"clues_added": New clues added to search.
+"clues_removed": Clues removed.
+"result_status": See rule 6.
+"result_relevance": "relevant", "irrelevant", "unknown".
+"recognition_difficulty": How hard it was to recognize the photo in the grid.
+"retrieval_outcome": Final outcome summary.
+"failure_point": Where it broke.
+"failure_reason": Why it broke.
+"failure_type": See rule 5.
+"uncertainty": User's stated confusion.
+"user_frustration": "HIGH", "MEDIUM", "LOW".
+"workaround": What they did outside normal search.
+"external_tool_used": e.g., "Google Drive".
+"external_platform": e.g., "WhatsApp".
+"manual_action": e.g., "Scrolled for 2 hours".
+"evidence_strength": See rule 7.
+"theme": Main conceptual theme.
+"opportunity_area": Product opportunity.
+"affected_segment": Who this affects.
+"validation_status": "PENDING".
+"exact_quote": Verbatim quote from the text.
 """
 
 def get_groq_client():
@@ -42,13 +73,8 @@ def get_groq_client():
         return None
     return Groq(api_key=api_key)
 
-# We use tenacity to automatically handle Groq rate limits (429 Too Many Requests)
 @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=2, max=10))
-def call_groq_api(client, text, model="openai/gpt-oss-20b"):
-    """
-    Calls the Groq API with strict JSON mode enabled.
-    Automatic retries with exponential backoff on failure (rate limits).
-    """
+def call_groq_api(client, text, model="openai/gpt-oss-120b"):
     chat_completion = client.chat.completions.create(
         messages=[
             {
@@ -62,18 +88,14 @@ def call_groq_api(client, text, model="openai/gpt-oss-20b"):
         ],
         model=model,
         response_format={"type": "json_object"},
-        temperature=0.1, # Low temperature for highly deterministic extraction
-        timeout=15.0, # Added timeout to prevent infinite hanging
+        temperature=0.1,
+        timeout=25.0,
     )
     
     response_content = chat_completion.choices[0].message.content
     return json.loads(response_content)
 
 def extract_insight(conversation_text):
-    """
-    Public function to extract an insight from a raw text string.
-    Returns the parsed JSON dictionary, or None if it fails.
-    """
     client = get_groq_client()
     if not client:
         return None
@@ -83,9 +105,3 @@ def extract_insight(conversation_text):
     except Exception as e:
         print(f"Failed to extract insight from Groq after retries: {e}")
         return None
-
-if __name__ == "__main__":
-    # Test
-    mock = "Google Photos is completely broken. I can never find the pictures I took of my dog from last year."
-    res = extract_insight(mock)
-    print(res)

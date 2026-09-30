@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Loader2, BookOpen, Bot, FileText } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 export default function PMQueries() {
   const [query, setQuery] = useState('');
@@ -47,14 +48,14 @@ export default function PMQueries() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto pb-20">
       <div className="mb-8 flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
             <Bot color="#4285F4" size={32} />
             AI PM Assistant
           </h1>
-          <p className="text-slate-900 font-medium mt-2 text-lg">Query the entire feedback dataset using Natural Language.</p>
+          <p className="text-slate-900 font-medium mt-2 text-lg">Query the entire feedback dataset focusing on vague-memory retrieval scenarios.</p>
         </div>
       </div>
 
@@ -68,7 +69,7 @@ export default function PMQueries() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="e.g., 'How do users try to search when they forget the date?'"
+                placeholder="e.g., 'What do users remember when they cannot find a photo?'"
                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-shadow text-slate-900 placeholder-slate-400 shadow-sm"
               />
             </div>
@@ -82,20 +83,26 @@ export default function PMQueries() {
           </form>
 
           <div className="mt-5">
-            <p className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Suggested Queries:</p>
+            <p className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Required Suggested Queries:</p>
             <div className="flex flex-wrap gap-2">
               {[
-                "What kinds of old photos do users struggle to retrieve?",
-                "What information do people actually remember about a photo?",
-                "What information have they forgotten?",
-                "How do users formulate searches when their memory is incomplete?",
-                "What are the biggest pain points with timeline scrolling?",
-                "How do users search using visual descriptions or colors?"
+                "What do users remember when they cannot find a photo?",
+                "What do users forget that makes photo retrieval difficult?",
+                "How do users formulate their first search when they only remember context?",
+                "What happens after the first search fails?",
+                "What clues do users add during search refinement?",
+                "Which retrieval problems are caused by query formulation rather than retrieval relevance?",
+                "Which retrieval problems are caused by poor result recognition?",
+                "Which users rely on timeline scrolling instead of search?",
+                "Which users use external tools or other people to recover photos?",
+                "What combinations of clues appear most often?",
+                "Where does retrieval break most often for incomplete memories?",
+                "Which reported problems are OUT OF SCOPE because they are actually backup, deletion or storage issues?"
               ].map((q, idx) => (
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => setQuery(q)}
+                  onClick={() => { setQuery(q); }}
                   className="text-xs font-medium bg-white border border-slate-300 text-slate-900 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 px-4 py-2 rounded-full transition-all text-left shadow-sm"
                 >
                   {q}
@@ -118,20 +125,27 @@ export default function PMQueries() {
               <h3 className="font-bold text-blue-800 mb-3 flex items-center gap-2">
                 <Bot size={20} /> AI Synthesis Answer
               </h3>
-              <p className="text-slate-800 leading-relaxed text-lg bg-white p-5 rounded-xl border border-blue-200 shadow-sm">
-                {ragAnswer}
-              </p>
+              <div className="text-slate-800 text-sm bg-white p-6 rounded-xl border border-blue-200 shadow-sm prose prose-sm max-w-none prose-slate prose-headings:text-blue-800 prose-headings:mb-2 prose-p:mb-4 prose-ul:my-2 prose-li:my-0 prose-strong:text-slate-900">
+                <ReactMarkdown>{ragAnswer}</ReactMarkdown>
+              </div>
             </div>
             
             <div className="p-6 bg-slate-50">
               <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                <BookOpen size={18} className="text-slate-500" /> Evidence Sources Used
+                <BookOpen size={18} className="text-slate-500" /> Traceable Evidence Sources
               </h3>
               <div className="space-y-3">
                 {sources.map((src, i) => (
-                  <div key={i} className="bg-white p-4 rounded-xl border border-slate-200 text-sm shadow-sm hover:border-blue-300 transition-colors">
-                    <div className="text-xs font-mono text-blue-600 mb-2">Vector Distance: {src.distance?.toFixed(3) || 'N/A'}</div>
-                    <p className="text-slate-700 italic">"{src.document}"</p>
+                  <div key={i} className="bg-white p-4 rounded-xl border border-slate-200 text-sm shadow-sm">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="text-xs font-mono font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded">Evidence ID: {src.id}</div>
+                      <div className="text-xs font-mono text-slate-500">Distance: {src.distance?.toFixed(3) || 'N/A'}</div>
+                    </div>
+                    <p className="text-slate-700 italic border-l-4 border-slate-300 pl-3 my-2">"{src.document}"</p>
+                    <div className="mt-3 flex gap-4 text-xs font-medium text-slate-600">
+                      <div><span className="text-slate-400">Outcome:</span> {src.metadata?.retrieval_outcome || 'Unknown'}</div>
+                      <div><span className="text-slate-400">Failure:</span> {src.metadata?.failure_type || 'Unknown'}</div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -162,21 +176,25 @@ export default function PMQueries() {
         {reportStatus === 'success' && globalReport && (
           <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-slate-50 p-5 rounded-xl shadow-inner border border-slate-100">
-                <h3 className="font-bold text-blue-700 mb-2">1. Core Retrieval Struggles</h3>
-                <p className="text-slate-700 text-sm leading-relaxed">{globalReport.struggles || "Data unavailable"}</p>
+              <div className="bg-slate-50 p-5 rounded-xl shadow-inner border border-slate-100 md:col-span-2">
+                <h3 className="font-bold text-blue-700 mb-2">1. In-Scope Scenarios</h3>
+                <p className="text-slate-700 text-sm leading-relaxed">{globalReport.in_scope_scenarios || "Data unavailable"}</p>
               </div>
               <div className="bg-slate-50 p-5 rounded-xl shadow-inner border border-slate-100">
-                <h3 className="font-bold text-blue-700 mb-2">2. What Users Remember</h3>
-                <p className="text-slate-700 text-sm leading-relaxed">{globalReport.remembered || "Data unavailable"}</p>
+                <h3 className="font-bold text-blue-700 mb-2">2. Memory Landscape (Remembered)</h3>
+                <p className="text-slate-700 text-sm leading-relaxed">{globalReport.remembered_landscape || "Data unavailable"}</p>
               </div>
               <div className="bg-slate-50 p-5 rounded-xl shadow-inner border border-slate-100">
-                <h3 className="font-bold text-blue-700 mb-2">3. What Users Forget</h3>
-                <p className="text-slate-700 text-sm leading-relaxed">{globalReport.forgotten || "Data unavailable"}</p>
+                <h3 className="font-bold text-blue-700 mb-2">3. Memory Landscape (Forgotten)</h3>
+                <p className="text-slate-700 text-sm leading-relaxed">{globalReport.forgotten_landscape || "Data unavailable"}</p>
               </div>
               <div className="bg-slate-50 p-5 rounded-xl shadow-inner border border-slate-100">
-                <h3 className="font-bold text-blue-700 mb-2">4. Search Formulation Behavior</h3>
-                <p className="text-slate-700 text-sm leading-relaxed">{globalReport.search_behavior || "Data unavailable"}</p>
+                <h3 className="font-bold text-blue-700 mb-2">4. Search Behaviors</h3>
+                <p className="text-slate-700 text-sm leading-relaxed">{globalReport.search_behaviors || "Data unavailable"}</p>
+              </div>
+              <div className="bg-slate-50 p-5 rounded-xl shadow-inner border border-slate-100">
+                <h3 className="font-bold text-blue-700 mb-2">5. Retrieval Failures</h3>
+                <p className="text-slate-700 text-sm leading-relaxed">{globalReport.retrieval_failures || "Data unavailable"}</p>
               </div>
               <div className="bg-blue-50 p-5 rounded-xl shadow-inner border border-blue-200 md:col-span-2">
                 <h3 className="font-bold text-blue-800 mb-2">Identified Opportunities</h3>
