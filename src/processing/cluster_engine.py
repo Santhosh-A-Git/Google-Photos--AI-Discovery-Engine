@@ -44,7 +44,7 @@ def synthesize_cluster_with_groq(client, cluster_data_list):
                 "content": f"Synthesize the following grouped insights into a Problem Cluster definition:\n\n{safe_data}",
             }
         ],
-        model="openai/gpt-oss-120b",
+        model="openai/gpt-oss-20b",
         temperature=0.3,
     )
     
@@ -91,7 +91,7 @@ def synthesize_opportunity_with_groq(client, problem_statement, problem_title):
                 "content": f"Problem Title: {problem_title}\\nProblem Statement: {problem_statement}",
             }
         ],
-        model="openai/gpt-oss-120b",
+        model="openai/gpt-oss-20b",
         temperature=0.3,
     )
     content = chat_completion.choices[0].message.content
@@ -119,10 +119,9 @@ def run_clustering(n_clusters=5):
 
         print(f"Fetched {len(results)} insights for clustering.")
         
-        # Prepare text for embedding
         texts = []
         for insight, _ in results:
-            text = f"{insight.retrieval_struggle} {insight.remembered_info} {insight.forgotten_info}"
+            text = f"{insight.failure_type} {insight.remembered_clues} {insight.forgotten_clues}"
             texts.append(text)
             
         print("Generating embeddings (using TF-IDF)...")
@@ -157,10 +156,10 @@ def run_clustering(n_clusters=5):
             for insight, conv in grouped_results:
                 sources.add(conv.source)
                 cluster_data.append({
-                    "struggle": insight.retrieval_struggle,
-                    "remembered": insight.remembered_info,
-                    "forgotten": insight.forgotten_info,
-                    "search": insight.search_formulation
+                    "struggle": insight.failure_type,
+                    "remembered": insight.remembered_clues,
+                    "forgotten": insight.forgotten_clues,
+                    "search": insight.exact_quote
                 })
                 
             evidence_count = len(grouped_results)
