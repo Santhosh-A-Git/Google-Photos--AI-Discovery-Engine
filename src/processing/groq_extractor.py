@@ -74,7 +74,7 @@ def get_groq_client():
     return Groq(api_key=api_key)
 
 @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=2, max=10))
-def call_groq_api(client, text, model="llama-3.1-8b-instant"):
+def call_groq_api(client, text, model="openai/gpt-oss-120b"):
     chat_completion = client.chat.completions.create(
         messages=[
             {

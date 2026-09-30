@@ -115,6 +115,7 @@ def generate_embeddings_and_upsert(conversations):
         documents.append(conv.raw_text)
         embeddings.append(vectors[i])
         metadatas.append({
+            "conversation_id": conv.id,
             "source": conv.source,
             "source_type": conv.source_type,
             "timestamp": conv.timestamp.isoformat() if conv.timestamp else ""

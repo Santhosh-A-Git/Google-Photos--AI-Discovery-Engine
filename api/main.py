@@ -176,7 +176,10 @@ def search_insights(query: SearchQuery):
                 
                 # Fetch full insight from DB for RAG context
                 session = SessionLocal()
-                insight = session.query(Insight).filter(Insight.id == int(results['ids'][0][i])).first()
+                conv_id = metadata.get('conversation_id')
+                insight = None
+                if conv_id:
+                    insight = session.query(Insight).filter(Insight.conversation_id == int(conv_id)).first()
                 session.close()
                 
                 if insight:
