@@ -248,6 +248,31 @@ def get_landscape():
     finally:
         session.close()
 
+@app.get("/api/clusters")
+def get_clusters():
+    session = SessionLocal()
+    try:
+        clusters = session.query(ProblemCluster).all()
+        return [{
+            "id": c.id,
+            "title": c.title,
+            "statement": c.statement,
+            "situation": c.situation,
+            "remembered_info": c.remembered_info,
+            "missing_info": c.missing_info,
+            "typical_attempt": c.typical_attempt,
+            "typical_failure": c.typical_failure,
+            "affected_content": c.affected_content,
+            "evidence_count": c.evidence_count,
+            "independent_source_count": c.independent_source_count,
+            "confidence_score": c.confidence_score
+        } for c in clusters]
+    except Exception as e:
+        print(f"Error in get_clusters: {e}")
+        return []
+    finally:
+        session.close()
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
