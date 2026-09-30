@@ -94,8 +94,8 @@ def run_inference_pipeline():
         print(f"VALID: Saved insight -> SCOPE: {scope}")
         valid_insights += 1
             
-        # Increased to 20 seconds to avoid strict TPM limits with the new massive schema
-        time.sleep(20) 
+        # Let Tenacity handle rate limits naturally with backoff
+        time.sleep(2) 
         
     print("\n--- AI Inference Complete ---")
     print(f"Total Insights Generated: {valid_insights}")
