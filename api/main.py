@@ -38,8 +38,8 @@ class StatusUpdate(BaseModel):
 def get_global_report():
     session = SessionLocal()
     try:
-        # Only query IN_SCOPE insights for the global report
-        insights = session.query(Insight).filter(Insight.scope_status == "IN_SCOPE").all()
+        # Only query a sample of IN_SCOPE insights to prevent exceeding LLM context and truncating JSON
+        insights = session.query(Insight).filter(Insight.scope_status == "IN_SCOPE").limit(30).all()
         if not insights:
             return {
                 "in_scope_scenarios": "No in-scope insights available yet.",
