@@ -38,7 +38,7 @@ def get_groq_client():
     return Groq(api_key=api_key)
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
-def call_groq_synthesis(client, aggregated_data_string, model="mixtral-8x7b-32768"):
+def call_groq_synthesis(client, aggregated_data_string, model="openai/gpt-oss-120b"):
     # Truncate string to avoid blowing up context window
     safe_data = aggregated_data_string[:25000] 
     
@@ -53,7 +53,7 @@ def call_groq_synthesis(client, aggregated_data_string, model="mixtral-8x7b-3276
                 "content": f"Synthesize the following user data to answer the 4 questions:\n\n{safe_data}",
             }
         ],
-        model="mixtral-8x7b-32768",
+        model="openai/gpt-oss-120b",
         temperature=0.3,
     )
     
@@ -136,7 +136,7 @@ def generate_rag_answer(query: str, documents: list):
                     "content": f"Context Evidence:\n{context}\n\nQuestion: {query}",
                 }
             ],
-            model="mixtral-8x7b-32768",
+            model="openai/gpt-oss-120b",
             temperature=0.2,
         )
         return chat_completion.choices[0].message.content
