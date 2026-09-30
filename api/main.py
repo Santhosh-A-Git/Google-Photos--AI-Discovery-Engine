@@ -7,6 +7,7 @@ from pydantic import BaseModel
 import sys
 import os
 from sqlalchemy import func
+import math
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -253,20 +254,32 @@ def get_clusters():
     session = SessionLocal()
     try:
         clusters = session.query(ProblemCluster).all()
-        return [{
-            "id": c.id,
-            "title": c.title,
-            "statement": c.statement,
-            "situation": c.situation,
-            "remembered_info": c.remembered_info,
-            "missing_info": c.missing_info,
-            "typical_attempt": c.typical_attempt,
-            "typical_failure": c.typical_failure,
-            "affected_content": c.affected_content,
-            "evidence_count": c.evidence_count,
-            "independent_source_count": c.independent_source_count,
-            "confidence_score": c.confidence_score
-        } for c in clusters]
+        result = []
+        for c in clusters:
+            e = c.evidence_count or 0
+            s = c.independent_source_count or 0
+            # C = (0.6 * log(E)) + (0.4 * (S/4)) where log is typically base 10 or e; we'll use log10(e+1) to match UI docs roughly
+            c_score = (0.6 * math.log10(e + 1)) + (0.4 * (s / 4.0)) if e > 0 else 0
+            
+            # Re-evaluate confidence string just in case
+            conf_str = "HIGH" if c_score > 0.65 else ("MEDIUM" if c_score > 0.4 else "LOW")
+            
+            result.append({
+                "id": c.id,
+                "title": c.title,
+                "statement": c.statement,
+                "situation": c.situation,
+                "remembered_info": c.remembered_info,
+                "missing_info": c.missing_info,
+                "typical_attempt": c.typical_attempt,
+                "typical_failure": c.typical_failure,
+                "affected_content": c.affected_content,
+                "evidence_count": e,
+                "independent_source_count": s,
+                "confidence_score": conf_str,
+                "priority_score": round(c_score, 2)
+            })
+        return result
     except Exception as e:
         print(f"Error in get_clusters: {e}")
         return []
