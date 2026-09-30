@@ -162,9 +162,10 @@ def search_insights(query: SearchQuery):
         collection = get_chroma_collection()
         query_embedding = embedder.encode(query.query).tolist()
         
+        # Fetch a large number of results, because many might not have insights yet
         results = collection.query(
             query_embeddings=[query_embedding],
-            n_results=query.limit
+            n_results=100
         )
         
         formatted_results = []
@@ -193,12 +194,16 @@ def search_insights(query: SearchQuery):
                     }
                     raw_documents.append(context_obj)
                 
-                formatted_results.append({
-                    "id": results['ids'][0][i],
-                    "document": doc,
-                    "metadata": metadata,
-                    "distance": results['distances'][0][i] if 'distances' in results and results['distances'] else None
-                })
+                    formatted_results.append({
+                        "id": results['ids'][0][i],
+                        "document": doc,
+                        "metadata": metadata,
+                        "distance": results['distances'][0][i] if 'distances' in results and results['distances'] else None
+                    })
+                
+                # Stop if we have enough results
+                if len(formatted_results) >= query.limit:
+                    break
         
         ai_answer = ""
         if raw_documents:
