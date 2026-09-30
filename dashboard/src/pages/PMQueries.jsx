@@ -200,9 +200,11 @@ export default function PMQueries() {
               </div>
               <div className="bg-blue-50 p-5 rounded-xl shadow-inner border border-blue-200 md:col-span-2">
                 <h3 className="font-bold text-blue-800 mb-2">Identified Opportunities</h3>
-                <div className="text-slate-800 text-sm leading-relaxed font-medium whitespace-pre-line">
-                  {globalReport.opportunities || "Data unavailable"}
-                </div>
+                <ul className="text-slate-800 text-sm leading-relaxed font-medium list-disc pl-5">
+                  {(globalReport.opportunities || "Data unavailable").split('\n').filter(Boolean).map((opp, idx) => (
+                    <li key={idx} className="mb-2">{opp.replace(/^-\s*/, '')}</li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
