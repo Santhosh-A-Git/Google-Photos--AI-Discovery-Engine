@@ -86,8 +86,10 @@ export default function PMQueries() {
             <p className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Required Suggested Queries:</p>
             <div className="flex flex-wrap gap-2">
               {[
-                "What do users remember when they cannot find a photo?",
-                "What do users forget that makes photo retrieval difficult?",
+                "What kinds of old photos do users struggle to retrieve?",
+                "What information do people actually remember about a photo?",
+                "What information have they forgotten?",
+                "How do users formulate searches when their memory is incomplete?",
                 "How do users formulate their first search when they only remember context?",
                 "What happens after the first search fails?",
                 "What clues do users add during search refinement?",
