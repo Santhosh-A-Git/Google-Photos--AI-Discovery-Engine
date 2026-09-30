@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 # pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 # pyrefly: ignore [missing-import]
@@ -43,8 +44,8 @@ def get_groq_client():
     return Groq(api_key=api_key)
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
-def call_groq_synthesis(client, aggregated_data_string, model="openai/gpt-oss-20b"):
-    safe_data = aggregated_data_string[:25000] 
+def call_groq_synthesis(client, aggregated_data_string, model="openai/gpt-oss-120b"):
+    safe_data = aggregated_data_string[:25000]
     
     chat_completion = client.chat.completions.create(
         messages=[
@@ -70,6 +71,7 @@ def call_groq_synthesis(client, aggregated_data_string, model="openai/gpt-oss-20
         return json.loads(content)
     except Exception as e:
         print(f"JSON parsing error: {e}")
+        traceback.print_exc()
         return {
             "in_scope_scenarios": "Data unavailable or parsing failed.",
             "remembered_landscape": "Data unavailable.",
