@@ -46,42 +46,42 @@ export default function DashboardHeader() {
   const MetricItem = ({ icon: Icon, title, value, googleColor }) => {
     const { text, bg, border } = googleColor;
     return (
-      <div className={`flex items-center gap-2 ${bg} px-3 py-2 rounded-lg border ${border} whitespace-nowrap shrink-0`}>
-        <Icon size={16} className={text} />
-        <div className="text-xs">
-          <div className={`${text} font-bold uppercase tracking-wide text-[10px]`}>{title}</div>
-          <div className={`font-bold ${text} text-lg leading-none`}>{value || 0}</div>
+      <div className={`flex items-center gap-1.5 ${bg} px-2 py-1.5 rounded-md border ${border} whitespace-nowrap`}>
+        <Icon size={14} className={text} />
+        <div>
+          <div className={`${text} font-bold uppercase tracking-wider text-[8px] leading-tight`}>{title}</div>
+          <div className={`font-bold ${text} text-sm leading-none mt-0.5`}>{value || 0}</div>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="flex flex-col bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm sticky top-0 z-10 w-full">
-      <div className="p-3 w-full overflow-hidden">
-        <div className="flex flex-nowrap overflow-x-auto items-center gap-2 lg:gap-3 w-full pb-2 custom-scrollbar">
+    <div className="flex flex-col bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm sticky top-0 z-10 w-full overflow-hidden">
+      <div className="p-2 w-full">
+        <div className="flex items-center justify-between w-full overflow-hidden">
           {/* Base */}
           <MetricItem icon={Database} title="Raw Records" value={stats.total_raw} googleColor={googleBlue} />
-          <MetricItem icon={Activity} title="AI Extracted Evidence" value={stats.total_insights} googleColor={googleGreen} />
+          <MetricItem icon={Activity} title="AI Evidence" value={stats.total_insights} googleColor={googleGreen} />
           
-          <div className="h-8 w-px bg-slate-200 self-center hidden lg:block"></div>
+          <div className="h-6 w-px bg-slate-200 shrink-0 hidden lg:block"></div>
 
           {/* Scope */}
           <MetricItem icon={CheckCircle2} title="In-Scope" value={stats.in_scope} googleColor={googleGreen} />
           <MetricItem icon={AlertTriangle} title="Adjacent" value={stats.adjacent} googleColor={googleYellow} />
-          <MetricItem icon={XCircle} title="Out-of-Scope" value={stats.out_of_scope} googleColor={googleRed} />
+          <MetricItem icon={XCircle} title="Out-Scope" value={stats.out_of_scope} googleColor={googleRed} />
           
-          <div className="h-8 w-px bg-slate-200 self-center hidden lg:block"></div>
+          <div className="h-6 w-px bg-slate-200 shrink-0 hidden lg:block"></div>
 
           {/* Evidence Quality */}
-          <MetricItem icon={Focus} title="Direct Evidence" value={stats.direct_evidence} googleColor={googleBlue} />
+          <MetricItem icon={Focus} title="Direct" value={stats.direct_evidence} googleColor={googleBlue} />
           <MetricItem icon={Compass} title="Directional" value={stats.directional_evidence} googleColor={googleYellow} />
           
-          <div className="h-8 w-px bg-slate-200 self-center hidden lg:block"></div>
+          <div className="h-6 w-px bg-slate-200 shrink-0 hidden lg:block"></div>
 
           {/* Sources */}
-          <MetricItem icon={Users} title="Unique Authors" value={stats.unique_authors} googleColor={googleGreen} />
-          <MetricItem icon={List} title="Source Types" value={stats.independent_source_types} googleColor={googleBlue} />
+          <MetricItem icon={Users} title="Authors" value={stats.unique_authors} googleColor={googleGreen} />
+          <MetricItem icon={List} title="Sources" value={stats.independent_source_types} googleColor={googleBlue} />
         </div>
       </div>
       
