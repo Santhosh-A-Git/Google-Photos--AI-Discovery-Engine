@@ -58,8 +58,8 @@ export default function DashboardHeader() {
 
   return (
     <div className="flex flex-col bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm sticky top-0 z-10 w-full">
-      <div className="p-3 w-full">
-        <div className="flex flex-wrap items-center gap-2 lg:gap-3 w-full justify-between lg:justify-start">
+      <div className="p-3 w-full overflow-hidden">
+        <div className="flex flex-nowrap overflow-x-auto items-center gap-2 lg:gap-3 w-full pb-2 custom-scrollbar">
           {/* Base */}
           <MetricItem icon={Database} title="Raw Records" value={stats.total_raw} googleColor={googleBlue} />
           <MetricItem icon={Activity} title="AI Extracted Evidence" value={stats.total_insights} googleColor={googleGreen} />

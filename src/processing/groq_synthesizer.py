@@ -181,7 +181,7 @@ def generate_rag_answer(query: str, documents: list):
                     "content": f"Context Evidence:\n{context}\n\nQuestion: {query}",
                 }
             ],
-            model="openai/gpt-oss-20b",
+            model="qwen/qwen3.8-27b",
             temperature=0.2,
         )
         return chat_completion.choices[0].message.content
