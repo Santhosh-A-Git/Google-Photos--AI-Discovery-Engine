@@ -116,9 +116,9 @@ EVIDENCE INTEGRITY RULE (CRITICAL):
 3. NEVER reverse the polarity of evidence.
 
 OUTPUT FORMAT:
-You MUST structure your response exactly like this (use Markdown):
+You MUST structure your response exactly like this (use Markdown). Do NOT include literal brackets or instructions in your output (such as "Directly and clearly answer..." or "[Insert your answer]"). Start immediately with your actual synthesized answer at the top:
 
-[Directly and clearly answer the user's query in 2-3 sentences based on the evidence. Explain the 'why' behind the pattern.]
+Your direct 2-3 sentence answer based on the evidence goes here.
 
 ### PRIMARY RETRIEVAL PATTERN
 **Failure Type:** [e.g., Memory -> Query Translation]
