@@ -166,6 +166,8 @@ def generate_rag_answer(query: str, documents: list):
         return "GROQ_API_KEY not found. LLM synthesis skipped."
         
     context = "\n\n---\n\n".join([json.dumps(d) for d in documents])
+    # Truncate context to strictly avoid exceeding the LLM input token limit
+    context = context[:15000]
     
     try:
         chat_completion = client.chat.completions.create(
@@ -179,7 +181,7 @@ def generate_rag_answer(query: str, documents: list):
                     "content": f"Context Evidence:\n{context}\n\nQuestion: {query}",
                 }
             ],
-            model="openai/gpt-oss-20b",
+            model="llama3-70b-8192",
             temperature=0.2,
         )
         return chat_completion.choices[0].message.content

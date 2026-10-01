@@ -88,7 +88,7 @@ export default function RetrievalJourney() {
       </div>
 
       {/* Horizontal Layout Container */}
-      <div className="relative w-full flex items-center py-8 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide px-4">
+      <div className="relative w-full flex items-center py-8 overflow-x-auto overflow-y-hidden snap-x snap-mandatory px-4 pb-6">
         
         {/* Continuous Horizontal Line */}
         <div className="absolute top-1/2 left-8 right-8 h-1 bg-gradient-to-r from-purple-200 via-teal-200 to-emerald-200 -translate-y-1/2 z-0 hidden lg:block rounded-full opacity-50"></div>

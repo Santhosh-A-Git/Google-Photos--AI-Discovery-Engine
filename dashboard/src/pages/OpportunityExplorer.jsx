@@ -40,7 +40,7 @@ const OpportunityExplorer = () => {
                   </div>
                   <div className="flex gap-2">
                     <span className="bg-white border border-slate-200 text-slate-600 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                      <Users size={14} /> Affected: {opp.affected_users?.substring(0, 30)}...
+                      <Users size={14} className="shrink-0" /> Affected: {opp.affected_users}
                     </span>
                     <span className="bg-white border border-slate-200 text-slate-600 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                       <Activity size={14} /> Relevance: {opp.retrieval_relevance}
