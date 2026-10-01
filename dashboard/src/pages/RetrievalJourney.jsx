@@ -72,7 +72,7 @@ export default function RetrievalJourney() {
   ];
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto h-full flex flex-col justify-center animate-in fade-in duration-700">
+    <div className="p-8 max-w-[1600px] mx-auto min-h-full flex flex-col justify-start animate-in fade-in duration-700 pt-12">
       <div className="mb-12 text-center space-y-4">
         <h1 className="text-4xl font-extrabold text-slate-900 flex items-center justify-center gap-4 tracking-tight">
           <div className="p-3 bg-emerald-100 rounded-2xl">

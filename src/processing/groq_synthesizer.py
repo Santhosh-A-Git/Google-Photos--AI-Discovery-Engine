@@ -181,7 +181,7 @@ def generate_rag_answer(query: str, documents: list):
                     "content": f"Context Evidence:\n{context}\n\nQuestion: {query}",
                 }
             ],
-            model="llama3-70b-8192",
+            model="llama-3.3-70b-versatile",
             temperature=0.2,
         )
         return chat_completion.choices[0].message.content
