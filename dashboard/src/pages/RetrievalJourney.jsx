@@ -87,64 +87,50 @@ export default function RetrievalJourney() {
         </p>
       </div>
 
-      {/* Horizontal Layout Container */}
-      <div className="relative w-full flex items-center py-8 overflow-x-auto overflow-y-hidden snap-x snap-mandatory px-4 pb-6">
-        
-        {/* Continuous Horizontal Line */}
-        <div className="absolute top-1/2 left-8 right-8 h-1 bg-gradient-to-r from-purple-200 via-teal-200 to-emerald-200 -translate-y-1/2 z-0 hidden lg:block rounded-full opacity-50"></div>
-
-        <div className="flex flex-row gap-6 min-w-max mx-auto px-4 z-10">
+      {/* Grid Layout Container */}
+      <div className="relative w-full py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 z-10">
           {steps.map((step, idx) => (
-            <div key={idx} className="flex items-center snap-center group">
-              <div className={`w-[320px] bg-white/80 backdrop-blur-xl p-6 rounded-3xl border-2 ${step.borderColor} shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative flex flex-col gap-4 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-[1.02] bg-gradient-to-b ${step.color} overflow-hidden h-[420px]`}>
+            <div key={idx} className="flex flex-col group h-full">
+              <div className={`w-full bg-white/80 backdrop-blur-xl p-5 rounded-3xl border-2 ${step.borderColor} shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative flex flex-col gap-3 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] bg-gradient-to-b ${step.color} h-full`}>
                 
                 {/* Header Section */}
-                <div className="flex items-center justify-between z-10">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-xl ${step.iconBg} shadow-inner`}>
-                      {React.cloneElement(step.icon, { size: 20 })}
-                    </div>
+                <div className="flex flex-col gap-2 z-10">
+                  <div className={`p-2 rounded-xl ${step.iconBg} shadow-inner w-fit`}>
+                    {React.cloneElement(step.icon, { size: 18 })}
                   </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <span className="bg-slate-900/5 text-slate-700 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-widest backdrop-blur-sm">
-                      Conf: {step.confidence}
-                    </span>
-                    <span className="bg-slate-900/5 text-slate-700 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-widest backdrop-blur-sm">
-                      Evid: {step.evidenceCount}
-                    </span>
-                  </div>
+                  <h2 className="text-base font-bold text-slate-800 leading-tight">{step.title}</h2>
+                </div>
+                
+                {/* Metrics */}
+                <div className="flex flex-wrap items-center gap-1">
+                  <span className="bg-slate-900/5 text-slate-700 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest backdrop-blur-sm">
+                    Conf: {step.confidence}
+                  </span>
+                  <span className="bg-slate-900/5 text-slate-700 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest backdrop-blur-sm">
+                    Evid: {step.evidenceCount}
+                  </span>
                 </div>
 
-                <h2 className="text-lg font-bold text-slate-800 z-10 mt-2">{step.title}</h2>
-                
                 {/* Content Cards */}
-                <div className="flex-1 flex flex-col gap-3 z-10">
-                  <div className="flex-1 bg-white/90 rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col group-hover:border-slate-200 transition-colors">
-                    <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                <div className="flex-1 flex flex-col gap-2 z-10 mt-1">
+                  <div className="flex-1 bg-white/90 rounded-xl p-3 shadow-sm border border-slate-100 flex flex-col group-hover:border-slate-200 transition-colors">
+                    <h3 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
-                      Observed Behaviour
+                      Behaviour
                     </h3>
-                    <p className="text-sm font-medium text-slate-700 leading-relaxed">{step.behavior}</p>
+                    <p className="text-xs font-medium text-slate-700 leading-relaxed">{step.behavior}</p>
                   </div>
                   
-                  <div className="flex-1 bg-rose-50/90 rounded-2xl p-4 shadow-sm border border-rose-100 flex flex-col group-hover:border-rose-200 transition-colors">
-                    <h3 className="text-[10px] font-bold text-rose-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <div className="flex-1 bg-rose-50/90 rounded-xl p-3 shadow-sm border border-rose-100 flex flex-col group-hover:border-rose-200 transition-colors">
+                    <h3 className="text-[9px] font-bold text-rose-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-rose-400"></div>
-                      Potential Failure
+                      Failure
                     </h3>
-                    <p className="text-sm font-medium text-rose-800 leading-relaxed">{step.failure}</p>
+                    <p className="text-xs font-medium text-rose-800 leading-relaxed">{step.failure}</p>
                   </div>
                 </div>
               </div>
-              
-              {/* Horizontal Arrow between items */}
-              {idx < steps.length - 1 && (
-                <div className="hidden lg:flex w-12 items-center justify-center z-20 shrink-0">
-                  <div className="bg-white p-2 rounded-full border border-slate-200 shadow-md transform transition-transform group-hover:scale-110 group-hover:translate-x-1">
-                    <ArrowRight className="text-slate-400" size={16} />
-                  </div>
-                </div>
-              )}
             </div>
           ))}
         </div>

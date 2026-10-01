@@ -45,7 +45,7 @@ export default function InterviewHypotheses() {
       id: `H${i + 1}`,
       title: c.statement || c.title,
       evidenceCount: c.evidence_count,
-      diversity: `${c.independent_source_count} source types`,
+      diversity: `${c.independent_source_count} unique users`,
       confidence: c.confidence_score,
       segment: segment,
       scenario: c.situation,
