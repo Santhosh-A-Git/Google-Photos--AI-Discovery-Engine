@@ -58,40 +58,49 @@ export default function DashboardHeader() {
 
   return (
     <div className="flex flex-col bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm sticky top-0 z-10 w-full">
-      <div className="p-3 w-full overflow-hidden">
-        <div className="flex flex-nowrap overflow-x-auto items-center gap-2 lg:gap-3 w-full pb-2 custom-scrollbar">
+      <div className="p-3 w-full">
+        <div className="flex flex-wrap items-center gap-2 lg:gap-3 w-full justify-between lg:justify-start">
           {/* Base */}
           <MetricItem icon={Database} title="Raw Records" value={stats.total_raw} googleColor={googleBlue} />
           <MetricItem icon={Activity} title="AI Extracted Evidence" value={stats.total_insights} googleColor={googleGreen} />
           
-          <div className="h-8 w-px bg-slate-200 self-center shrink-0 mx-1"></div>
+          <div className="h-8 w-px bg-slate-200 self-center hidden lg:block"></div>
 
           {/* Scope */}
           <MetricItem icon={CheckCircle2} title="In-Scope" value={stats.in_scope} googleColor={googleGreen} />
           <MetricItem icon={AlertTriangle} title="Adjacent" value={stats.adjacent} googleColor={googleYellow} />
           <MetricItem icon={XCircle} title="Out-of-Scope" value={stats.out_of_scope} googleColor={googleRed} />
           
-          <div className="h-8 w-px bg-slate-200 self-center shrink-0 mx-1"></div>
+          <div className="h-8 w-px bg-slate-200 self-center hidden lg:block"></div>
 
           {/* Evidence Quality */}
           <MetricItem icon={Focus} title="Direct Evidence" value={stats.direct_evidence} googleColor={googleBlue} />
           <MetricItem icon={Compass} title="Directional" value={stats.directional_evidence} googleColor={googleYellow} />
           
-          <div className="h-8 w-px bg-slate-200 self-center shrink-0 mx-1"></div>
+          <div className="h-8 w-px bg-slate-200 self-center hidden lg:block"></div>
 
           {/* Sources */}
           <MetricItem icon={Users} title="Unique Authors" value={stats.unique_authors} googleColor={googleGreen} />
           <MetricItem icon={List} title="Source Types" value={stats.independent_source_types} googleColor={googleBlue} />
-
-          <div className="h-8 w-px bg-slate-200 self-center shrink-0 mx-1"></div>
-
-          {/* Outcomes */}
-          <MetricItem icon={FileSearch} title="Found Immediately" value={stats.found_immediately} googleColor={googleGreen} />
-          <MetricItem icon={FileSearch} title="Refinement" value={stats.found_after_refinement} googleColor={googleBlue} />
-          <MetricItem icon={FileSearch} title="Workaround" value={stats.found_via_workaround} googleColor={googleYellow} />
-          <MetricItem icon={FileSearch} title="Not Found" value={stats.not_found} googleColor={googleRed} />
-          <MetricItem icon={FileSearch} title="Abandoned" value={stats.abandoned} googleColor={googleRed} />
         </div>
+      </div>
+      
+      {/* Outcomes Row */}
+      <div className="px-3 pb-3 border-t border-slate-100/50 bg-slate-50/30 pt-2 w-full">
+         <div className="flex items-center gap-4 text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2">
+            Retrieval Outcomes
+         </div>
+         <div className="flex flex-wrap gap-2 lg:gap-3">
+           <MetricItem icon={FileSearch} title="Found Immediately" value={stats.found_immediately} googleColor={googleGreen} />
+           <MetricItem icon={FileSearch} title="Found After Refinement" value={stats.found_after_refinement} googleColor={googleBlue} />
+           <MetricItem icon={FileSearch} title="Found via Workaround" value={stats.found_via_workaround} googleColor={googleYellow} />
+           <MetricItem icon={FileSearch} title="Not Found" value={stats.not_found} googleColor={googleRed} />
+           <MetricItem icon={FileSearch} title="Abandoned" value={stats.abandoned} googleColor={googleRed} />
+           <MetricItem icon={FileSearch} title="Unknown" value={stats.unknown} googleColor={googleBlue} />
+         </div>
+         <div className="text-[10px] text-slate-400 italic mt-3 pl-1">
+           * Counts are evidence observations unless explicitly labelled as users/authors.
+         </div>
       </div>
     </div>
   );
