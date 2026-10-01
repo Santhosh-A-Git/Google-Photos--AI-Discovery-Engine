@@ -43,10 +43,10 @@ export default function DashboardHeader() {
   const googleYellow = { text: "text-[#FBBC05]", bg: "bg-[#FEF7E0]", border: "border-[#FBBC05]/20" };
   const googleGreen = { text: "text-[#34A853]", bg: "bg-[#E6F4EA]", border: "border-[#34A853]/20" };
 
-  const MetricItem = ({ icon: Icon, title, value, googleColor }) => {
+  const MetricItem = ({ icon: Icon, title, value, googleColor, className = "" }) => {
     const { text, bg, border } = googleColor;
     return (
-      <div className={`flex items-center gap-1.5 ${bg} px-2 py-1.5 rounded-md border ${border} whitespace-nowrap`}>
+      <div className={`flex items-center gap-1.5 ${bg} px-2 py-1.5 rounded-md border ${border} whitespace-nowrap ${className}`}>
         <Icon size={14} className={text} />
         <div>
           <div className={`${text} font-bold uppercase tracking-wider text-[8px] leading-tight`}>{title}</div>
@@ -90,13 +90,13 @@ export default function DashboardHeader() {
          <div className="flex items-center gap-4 text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2">
             Retrieval Outcomes
          </div>
-         <div className="flex flex-wrap gap-2 lg:gap-3">
-           <MetricItem icon={FileSearch} title="Found Immediately" value={stats.found_immediately} googleColor={googleGreen} />
-           <MetricItem icon={FileSearch} title="Found After Refinement" value={stats.found_after_refinement} googleColor={googleBlue} />
-           <MetricItem icon={FileSearch} title="Found via Workaround" value={stats.found_via_workaround} googleColor={googleYellow} />
-           <MetricItem icon={FileSearch} title="Not Found" value={stats.not_found} googleColor={googleRed} />
-           <MetricItem icon={FileSearch} title="Abandoned" value={stats.abandoned} googleColor={googleRed} />
-           <MetricItem icon={FileSearch} title="Unknown" value={stats.unknown} googleColor={googleBlue} />
+         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 lg:gap-3 w-full">
+           <MetricItem icon={FileSearch} title="Found Immediately" value={stats.found_immediately} googleColor={googleGreen} className="w-full" />
+           <MetricItem icon={FileSearch} title="Found After Refinement" value={stats.found_after_refinement} googleColor={googleBlue} className="w-full" />
+           <MetricItem icon={FileSearch} title="Found via Workaround" value={stats.found_via_workaround} googleColor={googleYellow} className="w-full" />
+           <MetricItem icon={FileSearch} title="Not Found" value={stats.not_found} googleColor={googleRed} className="w-full" />
+           <MetricItem icon={FileSearch} title="Abandoned" value={stats.abandoned} googleColor={googleRed} className="w-full" />
+           <MetricItem icon={FileSearch} title="Unknown" value={stats.unknown} googleColor={googleBlue} className="w-full" />
          </div>
          <div className="text-[10px] text-slate-400 italic mt-3 pl-1">
            * Counts are evidence observations unless explicitly labelled as users/authors.
