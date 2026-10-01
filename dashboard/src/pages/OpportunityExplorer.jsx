@@ -101,7 +101,7 @@ const OpportunityExplorer = () => {
                       </div>
                       <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-slate-200 bg-white shadow-sm">
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Direct Evidence</div>
-                        <div className="text-sm font-bold text-slate-800">{parentCluster.evidence_count} observations across {parentCluster.independent_source_count} sources</div>
+                        <div className="text-sm font-bold text-slate-800">{parentCluster.evidence_count} observations across {parentCluster.independent_source_count} unique users</div>
                       </div>
                     </div>
 

@@ -70,7 +70,7 @@ const ProblemLandscape = () => {
         </p>
         <ul className="text-sm text-slate-700 space-y-1 ml-4 list-disc mb-3">
           <li><strong>Evidence Strength:</strong> 1 = inference only, 3 = contextual, 5 = explicit direct user statement</li>
-          <li><strong>Source Diversity:</strong> 1 = one source, 3 = two/three independent types, 5 = four or more types</li>
+          <li><strong>User Diversity:</strong> Score based on the number of unique users reporting the issue</li>
           <li><strong>Retrieval Relevance:</strong> 1 = general, 3 = related retrieval, 5 = directly about vague-memory</li>
           <li><strong>Outcome Impact:</strong> 1 = minor inconvenience, 3 = repeated effort, 5 = retrieval failure/abandonment</li>
         </ul>
@@ -78,7 +78,7 @@ const ProblemLandscape = () => {
           <strong>Example Calculation:</strong><br/>
           Cluster: "Temporal Ambiguity in Queries"<br/>
           Evidence Strength = 4 (High direct reports: 124 instances)<br/>
-          Source Diversity = 3 (3 unique platforms: Reddit, Play Store, Forums)<br/>
+          User Diversity = 3 (30 unique user accounts reporting the issue)<br/>
           Retrieval Relevance = 5 (Directly targets vague-memory search failure)<br/>
           Outcome Impact = 4 (Usually leads to task abandonment)<br/>
           <strong>Priority Score: (4 + 3 + 5 + 4) / 4 = 4.0 / 5.0</strong>
@@ -93,7 +93,7 @@ const ProblemLandscape = () => {
               <h2 className="text-xl font-bold text-slate-900">{cluster.title}</h2>
               <div className="flex flex-wrap gap-3 mt-2 text-sm text-slate-600">
                 <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-slate-200">📊 Evidence: <strong>{cluster.evidence_count} observations</strong></span>
-                <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-slate-200">🌐 Sources: <strong>{cluster.independent_source_count} types</strong></span>
+                <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-slate-200">🌐 Users: <strong>{cluster.independent_source_count}</strong></span>
                 <span className="flex items-center gap-1 bg-teal-50 text-teal-800 font-bold px-2 py-1 rounded border border-teal-200">
                   Priority Score: {calculateScore1to5(cluster)} / 5.0
                 </span>
