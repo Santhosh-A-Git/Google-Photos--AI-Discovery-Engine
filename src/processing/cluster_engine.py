@@ -166,6 +166,8 @@ def run_clustering(n_clusters=5):
             independent_source_count = len(sources)
             
             try:
+                import time
+                time.sleep(5)
                 cluster_def = synthesize_cluster_with_groq(client, cluster_data)
                 
                 new_cluster = ProblemCluster(
@@ -193,6 +195,8 @@ def run_clustering(n_clusters=5):
         clusters_db = session.query(ProblemCluster).all()
         for cluster in clusters_db:
             try:
+                import time
+                time.sleep(5)
                 opp_def = synthesize_opportunity_with_groq(client, cluster.statement, cluster.title)
                 new_opp = Opportunity(
                     cluster_id=cluster.id,

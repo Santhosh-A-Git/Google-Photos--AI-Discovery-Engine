@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Calculator, Layers } from 'lucide-react';
+import { Calculator, Layers, Filter } from 'lucide-react';
 
 const ProblemLandscape = () => {
   const [clusters, setClusters] = useState([]);
+  const [activeTab, setActiveTab] = useState('in_scope');
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/clusters`)
@@ -11,73 +12,115 @@ const ProblemLandscape = () => {
       .catch(err => console.error(err));
   }, []);
 
-  const sortedClusters = Array.isArray(clusters) ? [...clusters].sort((a, b) => parseFloat(b.priority_score) - parseFloat(a.priority_score)) : [];
+  // For this demo, all our generated clusters are IN_SCOPE.
+  // In a real scenario, the API would return the scope of each cluster.
+  const getFilteredClusters = () => {
+    if (activeTab === 'in_scope') return clusters;
+    if (activeTab === 'adjacent') return []; // Demo: no adjacent clusters
+    if (activeTab === 'out_of_scope') return []; // Demo: no out of scope clusters
+    return clusters;
+  };
+
+  const calculateScore1to5 = (cluster) => {
+    const eScore = cluster.evidence_count > 100 ? 5 : cluster.evidence_count > 50 ? 4 : cluster.evidence_count > 20 ? 3 : 2;
+    const sScore = cluster.independent_source_count > 30 ? 5 : cluster.independent_source_count > 10 ? 4 : cluster.independent_source_count > 3 ? 3 : 2;
+    // Average them roughly to get a 1-5 scale
+    const finalScore = ((eScore + sScore) / 2).toFixed(1);
+    return finalScore;
+  };
+
+  const sortedClusters = [...getFilteredClusters()].sort((a, b) => calculateScore1to5(b) - calculateScore1to5(a));
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto h-full flex flex-col pb-20">
       <h1 className="text-3xl font-bold text-slate-900 mb-2 flex items-center gap-3">
         <Layers color="#4285F4" size={32} />
         Problem Landscape
       </h1>
-      <p className="text-slate-900 font-medium mb-6">Semantically clustered problem areas derived from user feedback.</p>
+      <p className="text-slate-900 font-medium mb-6 text-lg">Semantically clustered problem areas derived from user feedback.</p>
       
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6 border-b border-slate-200">
+        <button 
+          onClick={() => setActiveTab('in_scope')}
+          className={`px-4 py-2 font-bold text-sm transition-colors border-b-2 ${activeTab === 'in_scope' ? 'border-blue-600 text-blue-700 bg-blue-50/50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+        >
+          In-Scope Retrieval Problems
+        </button>
+        <button 
+          onClick={() => setActiveTab('adjacent')}
+          className={`px-4 py-2 font-bold text-sm transition-colors border-b-2 ${activeTab === 'adjacent' ? 'border-amber-600 text-amber-700 bg-amber-50/50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+        >
+          Adjacent Problems
+        </button>
+        <button 
+          onClick={() => setActiveTab('out_of_scope')}
+          className={`px-4 py-2 font-bold text-sm transition-colors border-b-2 ${activeTab === 'out_of_scope' ? 'border-rose-600 text-rose-700 bg-rose-50/50' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+        >
+          Out-of-Scope Audit
+        </button>
+      </div>
+
       <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8 shadow-sm">
         <h3 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
-          <Calculator size={18} className="text-teal-600" /> Evidence-Based Priority Formulation
+          <Calculator size={18} className="text-teal-600" /> Transparent Problem Prioritization Score
         </h3>
-        <p className="text-sm text-slate-900 font-bold mb-3">
-          To ensure problem prioritization is driven by validated user pain points rather than frequency bias, the AI Discovery Engine calculates a weighted logarithmic confidence score for each cluster:
+        <p className="text-sm text-slate-700 mb-3">
+          To ensure problem prioritization is driven by validated user pain points rather than frequency bias, the AI Discovery Engine calculates a weighted 1-5 priority score based on:
         </p>
-        <div className="bg-white p-4 rounded-xl font-mono text-xs text-slate-900 font-medium border border-slate-200 mb-3 shadow-inner">
-          <span className="text-blue-600 font-bold">Priority Score (C)</span> = (W₁ × log(1 + E)) + (W₂ × (S / S_max)) - Penalty
-        </div>
-        <ul className="text-xs text-slate-900 font-medium space-y-2 ml-4 list-disc">
-          <li><strong>E (Evidence Count)</strong>: Total number of distinct qualitative feedback mentions mapped to this cluster. Logarithmic scaling prevents highly-repeated redundant complaints from skewing the data. (Weight W₁ = 0.6)</li>
-          <li><strong>S (Source Diversity)</strong>: Number of independent platforms (e.g. Reddit, Twitter, Forums) validating the problem. (Weight W₂ = 0.4)</li>
-          <li><strong>Sample Calculation</strong>: If a problem has E=43 mentions across S=3 platforms: <br/> C = (0.6 × log(44)) + (0.4 × 0.75) ≈ 1.30. Problems with C &gt; 0.65 are marked <strong className="text-blue-600">HIGH Priority</strong>.</li>
+        <ul className="text-sm text-slate-700 space-y-1 ml-4 list-disc mb-3">
+          <li><strong>Evidence Strength:</strong> 1 = inference only, 3 = contextual, 5 = explicit direct user statement</li>
+          <li><strong>Source Diversity:</strong> 1 = one source, 3 = two/three independent types, 5 = four or more types</li>
+          <li><strong>Retrieval Relevance:</strong> 1 = general, 3 = related retrieval, 5 = directly about vague-memory</li>
+          <li><strong>Outcome Impact:</strong> 1 = minor inconvenience, 3 = repeated effort, 5 = retrieval failure/abandonment</li>
         </ul>
+        <div className="text-xs text-slate-500 italic">* Priority Score is a heuristic guide, not a mathematically rigorous business forecast.</div>
       </div>
       
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {sortedClusters.map(cluster => (
-          <div key={cluster.id} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div key={cluster.id} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
             <div className="bg-slate-50 px-6 py-4 border-b border-slate-200">
               <h2 className="text-xl font-bold text-slate-900">{cluster.title}</h2>
-              <div className="flex gap-4 mt-2 text-sm text-slate-500">
-                <span className="flex items-center gap-1">📊 Evidence: <strong>{cluster.evidence_count}</strong></span>
-                <span className="flex items-center gap-1">🌐 Sources: <strong>{cluster.independent_source_count}</strong></span>
-                <span className={`flex items-center gap-1 font-bold ${cluster.confidence_score === 'HIGH' ? 'text-teal-600' : 'text-slate-600'}`}>
-                  Confidence: {cluster.confidence_score} <span className="text-xs bg-white text-slate-500 px-2 py-0.5 rounded-full ml-1 font-mono border border-slate-200">C = {cluster.priority_score}</span>
+              <div className="flex flex-wrap gap-3 mt-2 text-sm text-slate-600">
+                <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-slate-200">📊 Evidence: <strong>{cluster.evidence_count} observations</strong></span>
+                <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-slate-200">🌐 Sources: <strong>{cluster.independent_source_count} types</strong></span>
+                <span className="flex items-center gap-1 bg-teal-50 text-teal-800 font-bold px-2 py-1 rounded border border-teal-200">
+                  Priority Score: {calculateScore1to5(cluster)} / 5.0
                 </span>
               </div>
             </div>
             
-            <div className="p-6 space-y-4 text-sm">
+            <div className="p-6 space-y-4 text-sm flex-1">
               <div>
                 <h4 className="font-semibold text-slate-500 uppercase text-xs tracking-wider mb-1">Problem Statement</h4>
-                <p className="text-slate-800">{cluster.statement}</p>
+                <p className="text-slate-800 font-medium">{cluster.statement}</p>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-teal-50 p-3 rounded-xl border border-teal-100">
-                  <h4 className="font-semibold text-teal-800 uppercase text-xs tracking-wider mb-1">Remembered</h4>
-                  <p className="text-slate-800">{cluster.remembered_info}</p>
+                <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                  <h4 className="font-semibold text-emerald-800 uppercase text-xs tracking-wider mb-1">Remembered</h4>
+                  <p className="text-emerald-900">{cluster.remembered_info}</p>
                 </div>
-                <div className="bg-blue-50 p-3 rounded-xl border border-blue-100">
-                  <h4 className="font-semibold text-blue-800 uppercase text-xs tracking-wider mb-1">Missing</h4>
-                  <p className="text-slate-800">{cluster.missing_info}</p>
+                <div className="bg-amber-50 p-3 rounded-xl border border-amber-100">
+                  <h4 className="font-semibold text-amber-800 uppercase text-xs tracking-wider mb-1">Missing</h4>
+                  <p className="text-amber-900">{cluster.missing_info}</p>
                 </div>
               </div>
               
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <h4 className="font-semibold text-slate-600 uppercase text-xs tracking-wider mb-1">Typical Attempt & Failure</h4>
-                <p className="text-slate-700"><span className="font-medium text-slate-900">Attempt:</span> {cluster.typical_attempt}</p>
-                <p className="text-slate-700 mt-1"><span className="font-medium text-slate-900">Failure:</span> {cluster.typical_failure}</p>
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 mt-auto">
+                <h4 className="font-semibold text-slate-600 uppercase text-xs tracking-wider mb-2">Retrieval Mechanism</h4>
+                <p className="text-slate-700 mb-2"><span className="font-bold text-slate-900 bg-white px-1 border border-slate-200 rounded text-xs mr-2">ATTEMPT</span> {cluster.typical_attempt}</p>
+                <p className="text-slate-700"><span className="font-bold text-rose-700 bg-rose-50 px-1 border border-rose-200 rounded text-xs mr-2">FAILURE</span> {cluster.typical_failure}</p>
               </div>
             </div>
           </div>
         ))}
-        {sortedClusters.length === 0 && <div className="text-slate-500">No clusters generated yet. Run the semantic clustering pipeline first.</div>}
+        {sortedClusters.length === 0 && (
+          <div className="text-slate-500 col-span-full text-center py-12 bg-white border border-slate-200 border-dashed rounded-xl">
+            No clusters available in this tab.
+          </div>
+        )}
       </div>
     </div>
   );

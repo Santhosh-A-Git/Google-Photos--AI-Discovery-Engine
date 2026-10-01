@@ -1,42 +1,62 @@
-import React, { useState } from 'react';
-import { UserCheck, Target, AlertCircle } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { UserCheck, Target, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 
 export default function InterviewHypotheses() {
-  const [hypotheses] = useState([
-    {
-      id: "H1",
-      title: "Users remember event/place/person but forget exact date.",
-      evidenceCount: 42,
-      diversity: "High (4 Sources)",
-      confidence: "HIGH",
-      segment: "Occasion-driven retrievers",
-      scenario: "Attempting to find photos of a past vacation without knowing the year.",
-      question: "Tell me about the last photo you knew existed but couldn't find. What exactly did you remember?"
-    },
-    {
-      id: "H2",
-      title: "Users cannot formulate an effective first search using context clues.",
-      evidenceCount: 38,
-      diversity: "High (3 Sources)",
-      confidence: "HIGH",
-      segment: "Context-heavy retrievers",
-      scenario: "Searching for 'photo I took when I was sick' but the system requires literal object tags.",
-      question: "What did you type or say first when you tried to find it?"
-    },
-    {
-      id: "H3",
-      title: "Users do not know what to try after the first search fails.",
-      evidenceCount: 29,
-      diversity: "Medium (2 Sources)",
-      confidence: "MEDIUM",
-      segment: "Search-recovery users",
-      scenario: "Search returns unrelated results and user switches to manual timeline scrolling.",
-      question: "What did you do after your first search returned nothing useful?"
+  const [clusters, setClusters] = useState([]);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/clusters`)
+      .then(res => res.json())
+      .then(data => setClusters(data))
+      .catch(err => console.error(err));
+  }, []);
+
+  // Map clusters to hypothesis structure dynamically
+  const hypotheses = clusters.map((c, i) => {
+    // Generate some contextual questions based on the problem title
+    let question = "Tell me about the last photo you knew existed but couldn't find. What exactly did you remember?";
+    let support = "User recalls contextual details but not exact metadata like date.";
+    let falsify = "User remembers date and metadata clearly, but retrieval still fails because results are irrelevant.";
+    let segment = "Occasion-driven retrievers";
+
+    if (c.title.includes("Temporal") || c.title.includes("Time")) {
+      question = "When you search for photos from 'years ago', how do you usually specify the time if you don't know the exact year?";
+      support = "User tries searching with fuzzy phrases like 'college years' and fails.";
+      falsify = "Users prefer manual scrolling over searching for old photos anyway.";
+      segment = "Time-uncertain retrievers";
+    } else if (c.title.includes("Screenshot")) {
+      question = "How do you currently retrieve an old screenshot of a receipt or note?";
+      support = "User describes manual endless scrolling in the Screenshots folder.";
+      falsify = "Users say they just search for the text in the screenshot and it works.";
+      segment = "Productivity/Utility users";
+    } else if (c.title.includes("Cross-Platform")) {
+      question = "When a friend sends you a photo on WhatsApp, how do you find it 3 months later?";
+      support = "User searches by the friend's name or guesses the download date and gives up.";
+      falsify = "User consistently creates specific albums for downloaded media immediately.";
+      segment = "Social sharers";
+    } else if (c.title.includes("Facial")) {
+      question = "Have you ever tried to find a photo of a specific person and couldn't, even though you know it's there?";
+      support = "User describes situations where the face was partially hidden or in costume.";
+      falsify = "Failure is due to the user misremembering who was in the photo, not AI failure.";
+      segment = "Event-based retrievers";
     }
-  ]);
+
+    return {
+      id: `H${i + 1}`,
+      title: c.statement || c.title,
+      evidenceCount: c.evidence_count,
+      diversity: `${c.independent_source_count} source types`,
+      confidence: c.confidence_score,
+      segment: segment,
+      scenario: c.situation,
+      question: question,
+      wouldSupport: support,
+      wouldFalsify: falsify
+    };
+  });
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto h-full flex flex-col pb-20">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
           <UserCheck color="#6366f1" size={32} />
@@ -45,40 +65,64 @@ export default function InterviewHypotheses() {
         <p className="text-slate-900 font-medium mt-2 text-lg">Targeted primary research questions generated from vague-memory retrieval evidence.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 gap-8">
         {hypotheses.map((h, i) => (
-          <div key={i} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="p-5 border-b border-slate-200 bg-indigo-50 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-indigo-900 flex items-center gap-2">
-                <span className="bg-indigo-600 text-white px-2 py-1 rounded text-sm">{h.id}</span>
+          <div key={i} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="p-6 border-b border-slate-200 bg-indigo-50/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <h2 className="text-xl font-bold text-indigo-900 flex items-center gap-3 leading-snug">
+                <span className="bg-indigo-600 text-white px-3 py-1 rounded-lg text-sm shrink-0 shadow-sm">{h.id}</span>
                 {h.title}
               </h2>
-              <div className="flex gap-2">
-                <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded">Confidence: {h.confidence}</span>
-                <span className="bg-slate-200 text-slate-800 text-xs font-bold px-2 py-1 rounded">Evidence: {h.evidenceCount}</span>
+              <div className="flex flex-wrap gap-2 shrink-0">
+                <span className="bg-white border border-slate-200 text-slate-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Confidence: <span className={h.confidence === 'HIGH' ? 'text-teal-600' : 'text-slate-800'}>{h.confidence}</span></span>
+                <span className="bg-white border border-slate-200 text-slate-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Evidence: {h.evidenceCount}</span>
+                <span className="bg-white border border-slate-200 text-slate-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Diversity: {h.diversity}</span>
               </div>
             </div>
             
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-sm font-bold text-slate-500 uppercase mb-2 flex items-center gap-2"><Target size={16}/> Target Segment</h3>
-                <p className="font-medium text-slate-900 bg-slate-50 p-3 rounded-lg border border-slate-100">{h.segment}</p>
-              </div>
-              
-              <div>
-                <h3 className="text-sm font-bold text-slate-500 uppercase mb-2 flex items-center gap-2"><AlertCircle size={16}/> Retrieval Scenario</h3>
-                <p className="font-medium text-slate-900 bg-slate-50 p-3 rounded-lg border border-slate-100">{h.scenario}</p>
+            <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2"><Target size={14}/> Target Segment</h3>
+                  <p className="font-medium text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-100">{h.segment}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2"><AlertCircle size={14}/> Retrieval Scenario</h3>
+                  <p className="font-medium text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-100">{h.scenario}</p>
+                </div>
               </div>
 
-              <div className="md:col-span-2">
-                <h3 className="text-sm font-bold text-indigo-500 uppercase mb-2 flex items-center gap-2"><UserCheck size={16}/> Primary Interview Question</h3>
-                <p className="text-lg font-bold text-indigo-900 bg-indigo-50/50 p-4 rounded-lg border-l-4 border-indigo-400 italic">
-                  "{h.question}"
-                </p>
+              <div className="flex flex-col justify-between space-y-6">
+                <div>
+                  <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider mb-2 flex items-center gap-2"><UserCheck size={14}/> Primary Interview Question</h3>
+                  <p className="text-lg font-bold text-indigo-900 bg-indigo-50/50 p-5 rounded-xl border border-indigo-100 italic">
+                    "{h.question}"
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-3">
+                  <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex gap-3">
+                    <CheckCircle className="text-emerald-500 shrink-0 mt-0.5" size={16} />
+                    <div>
+                      <h4 className="text-xs font-bold text-emerald-800 uppercase mb-1">What would support it</h4>
+                      <p className="text-sm text-emerald-900 leading-relaxed">{h.wouldSupport}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-rose-50 p-4 rounded-xl border border-rose-100 flex gap-3">
+                    <XCircle className="text-rose-500 shrink-0 mt-0.5" size={16} />
+                    <div>
+                      <h4 className="text-xs font-bold text-rose-800 uppercase mb-1">What would falsify it</h4>
+                      <p className="text-sm text-rose-900 leading-relaxed">{h.wouldFalsify}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         ))}
+        {hypotheses.length === 0 && <div className="text-slate-500 text-center py-12">No hypotheses generated yet.</div>}
       </div>
     </div>
   );

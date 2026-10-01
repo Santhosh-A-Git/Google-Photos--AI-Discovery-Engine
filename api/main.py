@@ -99,16 +99,25 @@ def get_stats():
         total_insights = session.query(Insight).count()
         
         # Scopes breakdown
-        scopes = session.query(
-            Insight.scope_status, 
-            func.count(Insight.id).label('count')
-        ).group_by(Insight.scope_status).order_by(func.count(Insight.id).desc()).all()
+        in_scope = session.query(Insight).filter(Insight.scope_status == "IN_SCOPE").count()
+        adjacent = session.query(Insight).filter(Insight.scope_status == "ADJACENT").count()
+        out_of_scope = session.query(Insight).filter(Insight.scope_status == "OUT_OF_SCOPE").count()
         
-        # Outcomes breakdown
-        outcomes = session.query(
-            Insight.retrieval_outcome, 
-            func.count(Insight.id).label('count')
-        ).group_by(Insight.retrieval_outcome).order_by(func.count(Insight.id).desc()).all()
+        # Evidence Types
+        direct_evidence = session.query(Insight).filter(Insight.evidence_strength == "HIGH").count()
+        directional_evidence = session.query(Insight).filter(Insight.evidence_strength != "HIGH").count()
+        
+        # Source Diversity
+        unique_authors = session.query(Insight.conversation_id).distinct().count() # Proxy for authors
+        independent_source_types = session.query(Conversation.source).join(Insight, Insight.conversation_id == Conversation.id).distinct().count()
+        
+        # Outcomes breakdown (using result_status field that we mapped)
+        found_immediately = session.query(Insight).filter(Insight.result_status == "FOUND_IMMEDIATELY").count()
+        found_after_refinement = session.query(Insight).filter(Insight.result_status == "FOUND_AFTER_REFINEMENT").count()
+        found_via_workaround = session.query(Insight).filter(Insight.result_status == "FOUND_VIA_WORKAROUND").count()
+        not_found = session.query(Insight).filter(Insight.result_status == "NOT_FOUND").count()
+        abandoned = session.query(Insight).filter(Insight.result_status == "ABANDONED").count()
+        unknown = session.query(Insight).filter(Insight.result_status == "UNKNOWN").count()
         
         # Failures breakdown
         failures = session.query(
@@ -116,31 +125,27 @@ def get_stats():
             func.count(Insight.id).label('count')
         ).group_by(Insight.failure_type).order_by(func.count(Insight.id).desc()).all()
 
-        # Sources breakdown for backwards compatibility
-        sources_data = session.query(
-            Conversation.source, 
-            func.count(Conversation.id).label('count')
-        ).group_by(Conversation.source).all()
-        
         return {
-            "total_raw_records": total_raw,
-            "total_conversations": total_raw,
-            "total_insights_extracted": total_insights,
+            "total_raw": total_raw,
             "total_insights": total_insights,
-            "scopes": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in scopes],
-            "outcomes": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in outcomes],
-            "failures": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in failures],
-            "sources": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in sources_data]
+            "in_scope": in_scope,
+            "adjacent": adjacent,
+            "out_of_scope": out_of_scope,
+            "direct_evidence": direct_evidence,
+            "directional_evidence": directional_evidence,
+            "unique_authors": unique_authors,
+            "independent_source_types": independent_source_types,
+            "found_immediately": found_immediately,
+            "found_after_refinement": found_after_refinement,
+            "found_via_workaround": found_via_workaround,
+            "not_found": not_found,
+            "abandoned": abandoned,
+            "unknown": unknown,
+            "failures": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in failures]
         }
     except Exception as e:
         print(f"Error in get_stats: {e}")
-        return {
-            "total_raw_records": 0,
-            "total_insights_extracted": 0,
-            "scopes": [],
-            "outcomes": [],
-            "failures": []
-        }
+        return {}
     finally:
         session.close()
 
@@ -250,6 +255,8 @@ def get_landscape():
             "event_remembered": [i.remembered_event for i in insights if i.remembered_event],
             "object_remembered": [i.remembered_object for i in insights if i.remembered_object],
             "visuals_remembered": [i.remembered_visual_attributes for i in insights if i.remembered_visual_attributes],
+            "text_remembered": [i.remembered_text for i in insights if i.remembered_text],
+            "relationship_remembered": [i.remembered_relationship for i in insights if i.remembered_relationship],
             "total_in_scope": len(insights)
         }
     except Exception as e:
@@ -261,6 +268,8 @@ def get_landscape():
             "event_remembered": [],
             "object_remembered": [],
             "visuals_remembered": [],
+            "text_remembered": [],
+            "relationship_remembered": [],
             "total_in_scope": 0
         }
     finally:

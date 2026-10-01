@@ -54,6 +54,8 @@ class Insight(Base):
     remembered_visual_attributes = Column(String(200), nullable=True)
     remembered_text = Column(String(200), nullable=True)
     remembered_relationship = Column(String(200), nullable=True)
+    memory_completeness = Column(String(50), nullable=True)
+    time_precision = Column(String(50), nullable=True)
 
     # SEARCH BEHAVIOUR
     initial_search_query = Column(Text, nullable=True)
@@ -63,6 +65,7 @@ class Insight(Base):
     refinement_attempt = Column(Text, nullable=True)
     clues_added = Column(Text, nullable=True)
     clues_removed = Column(Text, nullable=True)
+    alternate_search_strategy = Column(Text, nullable=True)
 
     # RETRIEVAL RESULT
     result_status = Column(String(100), nullable=True) # FOUND, NOT_FOUND, ABANDONED, etc.
@@ -89,6 +92,10 @@ class Insight(Base):
     opportunity_area = Column(String(200), nullable=True)
     affected_segment = Column(String(200), nullable=True)
     validation_status = Column(String(50), nullable=True)
+    supporting_evidence_ids = Column(Text, nullable=True)
+    sentiment_polarity = Column(String(50), nullable=True)
+    problem_signal = Column(String(50), nullable=True)
+    author_type = Column(String(100), nullable=True)
     
     exact_quote = Column(Text, nullable=False) # For traceability
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
@@ -132,6 +139,9 @@ class Opportunity(Base):
     evidence_strength = Column(String(50), default="MEDIUM")
     prevalence = Column(String(100), nullable=True)
     retrieval_relevance = Column(String(50), default="HIGH")
+    core_hypothesis = Column(Text, nullable=True)
+    proposed_solution = Column(Text, nullable=True)
+    risks = Column(Text, nullable=True)
 
     def __repr__(self):
         return f"<Opportunity(area='{self.opportunity_area}')>"

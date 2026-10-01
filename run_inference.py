@@ -29,6 +29,7 @@ def run_inference_pipeline():
 
     for i, conv in enumerate(unprocessed_convos):
         print(f"\n[{i+1}/{len(unprocessed_convos)}] Analyzing Conversation ID: {conv.id} ({conv.source})")
+        time.sleep(2) # Avoid rate limit
         
         # Mark as processed
         conv.is_processed = 1
@@ -40,51 +41,56 @@ def run_inference_pipeline():
             session.commit()
             sys.exit(1)
             
+        def s(val):
+            if isinstance(val, list):
+                return ", ".join([str(v) for v in val])
+            return val
+
         # We save ALL records to the DB for audit, even OUT_OF_SCOPE.
         insight = Insight(
             conversation_id=conv.id,
-            scope_status=result_json.get("scope_status"),
-            scope_reason=result_json.get("scope_reason"),
-            scope_confidence=result_json.get("scope_confidence"),
-            retrieval_scenario=result_json.get("retrieval_scenario"),
-            photo_type=result_json.get("photo_type"),
-            context_type=result_json.get("context_type"),
-            remembered_clues=result_json.get("remembered_clues"),
-            forgotten_clues=result_json.get("forgotten_clues"),
-            approximate_time=result_json.get("approximate_time"),
-            remembered_place=result_json.get("remembered_place"),
-            remembered_people=result_json.get("remembered_people"),
-            remembered_event=result_json.get("remembered_event"),
-            remembered_object=result_json.get("remembered_object"),
-            remembered_visual_attributes=result_json.get("remembered_visual_attributes"),
-            remembered_text=result_json.get("remembered_text"),
-            remembered_relationship=result_json.get("remembered_relationship"),
-            initial_search_query=result_json.get("initial_search_query"),
-            search_mode=result_json.get("search_mode"),
-            search_strategy=result_json.get("search_strategy"),
-            search_attempt_number=result_json.get("search_attempt_number"),
-            refinement_attempt=result_json.get("refinement_attempt"),
-            clues_added=result_json.get("clues_added"),
-            clues_removed=result_json.get("clues_removed"),
-            result_status=result_json.get("result_status"),
-            result_relevance=result_json.get("result_relevance"),
-            recognition_difficulty=result_json.get("recognition_difficulty"),
-            retrieval_outcome=result_json.get("retrieval_outcome"),
-            failure_point=result_json.get("failure_point"),
-            failure_reason=result_json.get("failure_reason"),
-            failure_type=result_json.get("failure_type"),
-            uncertainty=result_json.get("uncertainty"),
-            user_frustration=result_json.get("user_frustration"),
-            workaround=result_json.get("workaround"),
-            external_tool_used=result_json.get("external_tool_used"),
-            external_platform=result_json.get("external_platform"),
-            manual_action=result_json.get("manual_action"),
-            evidence_strength=result_json.get("evidence_strength"),
-            theme=result_json.get("theme"),
-            opportunity_area=result_json.get("opportunity_area"),
-            affected_segment=result_json.get("affected_segment"),
-            validation_status=result_json.get("validation_status", "PENDING"),
-            exact_quote=result_json.get("exact_quote") or ""
+            scope_status=s(result_json.get("scope_status")),
+            scope_reason=s(result_json.get("scope_reason")),
+            scope_confidence=s(result_json.get("scope_confidence")),
+            retrieval_scenario=s(result_json.get("retrieval_scenario")),
+            photo_type=s(result_json.get("photo_type")),
+            context_type=s(result_json.get("context_type")),
+            remembered_clues=s(result_json.get("remembered_clues")),
+            forgotten_clues=s(result_json.get("forgotten_clues")),
+            approximate_time=s(result_json.get("approximate_time")),
+            remembered_place=s(result_json.get("remembered_place")),
+            remembered_people=s(result_json.get("remembered_people")),
+            remembered_event=s(result_json.get("remembered_event")),
+            remembered_object=s(result_json.get("remembered_object")),
+            remembered_visual_attributes=s(result_json.get("remembered_visual_attributes")),
+            remembered_text=s(result_json.get("remembered_text")),
+            remembered_relationship=s(result_json.get("remembered_relationship")),
+            initial_search_query=s(result_json.get("initial_search_query")),
+            search_mode=s(result_json.get("search_mode")),
+            search_strategy=s(result_json.get("search_strategy")),
+            search_attempt_number=s(result_json.get("search_attempt_number")),
+            refinement_attempt=s(result_json.get("refinement_attempt")),
+            clues_added=s(result_json.get("clues_added")),
+            clues_removed=s(result_json.get("clues_removed")),
+            result_status=s(result_json.get("result_status")),
+            result_relevance=s(result_json.get("result_relevance")),
+            recognition_difficulty=s(result_json.get("recognition_difficulty")),
+            retrieval_outcome=s(result_json.get("retrieval_outcome")),
+            failure_point=s(result_json.get("failure_point")),
+            failure_reason=s(result_json.get("failure_reason")),
+            failure_type=s(result_json.get("failure_type")),
+            uncertainty=s(result_json.get("uncertainty")),
+            user_frustration=s(result_json.get("user_frustration")),
+            workaround=s(result_json.get("workaround")),
+            external_tool_used=s(result_json.get("external_tool_used")),
+            external_platform=s(result_json.get("external_platform")),
+            manual_action=s(result_json.get("manual_action")),
+            evidence_strength=s(result_json.get("evidence_strength")),
+            theme=s(result_json.get("theme")),
+            opportunity_area=s(result_json.get("opportunity_area")),
+            affected_segment=s(result_json.get("affected_segment")),
+            validation_status=s(result_json.get("validation_status", "PENDING")),
+            exact_quote=s(result_json.get("exact_quote") or "")
         )
         
         session.add(insight)
