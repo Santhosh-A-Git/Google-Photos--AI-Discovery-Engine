@@ -8,11 +8,16 @@ import sys
 import os
 from sqlalchemy import func
 import math
+from dotenv import load_dotenv
+
+load_dotenv()
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.database.db_manager import SessionLocal
 from src.database.models import Conversation, Insight, ProblemCluster, Opportunity
+from src.processing.vector_pipeline import get_chroma_collection, embedder
+from src.processing.groq_synthesizer import generate_global_report, generate_rag_answer
 
 app = FastAPI(title="Google Photos AI Discovery Engine API")
 
@@ -68,7 +73,6 @@ def get_global_report():
             "outcome": i.retrieval_outcome
         } for i in insights]
         
-        from src.processing.groq_synthesizer import generate_global_report
         report = generate_global_report(data)
         
         # Cache it to avoid rate limits on subsequent clicks
@@ -124,8 +128,15 @@ def get_stats():
             func.count(Insight.id).label('count')
         ).group_by(Insight.failure_type).order_by(func.count(Insight.id).desc()).all()
 
+        # Sources breakdown for backwards compatibility with DataSources
+        sources_data = session.query(
+            Conversation.source, 
+            func.count(Conversation.id).label('count')
+        ).group_by(Conversation.source).all()
+
         return {
             "total_raw": total_raw,
+            "total_conversations": total_raw,
             "total_insights": total_insights,
             "in_scope": in_scope,
             "adjacent": adjacent,
@@ -140,7 +151,8 @@ def get_stats():
             "not_found": not_found,
             "abandoned": abandoned,
             "unknown": unknown,
-            "failures": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in failures]
+            "failures": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in failures],
+            "sources": [{"name": c[0] or "UNKNOWN", "value": c[1]} for c in sources_data]
         }
     except Exception as e:
         print(f"Error in get_stats: {e}")
@@ -181,7 +193,6 @@ def get_insights(limit: int = 50):
 @app.post("/api/search")
 def search_insights(query: SearchQuery):
     try:
-        from src.processing.vector_pipeline import get_chroma_collection, embedder
         collection = get_chroma_collection()
         query_embedding = embedder.encode(query.query).tolist()
         
@@ -230,7 +241,6 @@ def search_insights(query: SearchQuery):
         
         ai_answer = ""
         if raw_documents:
-            from src.processing.groq_synthesizer import generate_rag_answer
             ai_answer = generate_rag_answer(query.query, raw_documents[:5])
         else:
             ai_answer = "No relevant context found in the database to answer this query."
@@ -273,6 +283,30 @@ def get_landscape():
             "relationship_remembered": [],
             "total_in_scope": 0
         }
+    finally:
+        session.close()
+
+@app.get("/api/opportunities")
+def get_opportunities():
+    session = SessionLocal()
+    try:
+        opps = session.query(Opportunity).all()
+        result = []
+        for o in opps:
+            result.append({
+                "id": o.id,
+                "cluster_id": o.cluster_id,
+                "opportunity_area": o.opportunity_area,
+                "affected_users": o.affected_users,
+                "retrieval_relevance": o.retrieval_relevance,
+                "core_hypothesis": o.core_hypothesis,
+                "proposed_solution": o.proposed_solution,
+                "risks": o.risks
+            })
+        return result
+    except Exception as e:
+        print(f"Error in get_opportunities: {e}")
+        return []
     finally:
         session.close()
 

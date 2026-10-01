@@ -49,9 +49,9 @@ export default function DashboardHeader() {
   );
 
   return (
-    <div className="flex flex-col bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm sticky top-0 z-10">
-      <div className="p-3 overflow-x-auto">
-        <div className="flex gap-3">
+    <div className="flex flex-col bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm sticky top-0 z-10 w-full">
+      <div className="p-3 w-full">
+        <div className="flex flex-wrap items-center gap-2 lg:gap-3 w-full justify-between lg:justify-start">
           {/* Base */}
           <MetricItem icon={Database} title="Raw Records" value={stats.total_raw} colorClass="text-slate-500" bgClass="bg-slate-50" borderClass="border-slate-200" />
           <MetricItem icon={Activity} title="AI Extracted Evidence" value={stats.total_insights} colorClass="text-blue-500" bgClass="bg-blue-50" borderClass="border-blue-100" />
@@ -78,11 +78,11 @@ export default function DashboardHeader() {
       </div>
       
       {/* Outcomes Row */}
-      <div className="px-3 pb-3 overflow-x-auto border-t border-slate-100/50 bg-slate-50/30 pt-2">
+      <div className="px-3 pb-3 border-t border-slate-100/50 bg-slate-50/30 pt-2 w-full">
          <div className="flex items-center gap-4 text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2">
             Retrieval Outcomes
          </div>
-         <div className="flex gap-3">
+         <div className="flex flex-wrap gap-2 lg:gap-3">
            <MetricItem icon={FileSearch} title="Found Immediately" value={stats.found_immediately} colorClass="text-green-500" bgClass="bg-green-50" borderClass="border-green-100" />
            <MetricItem icon={FileSearch} title="Found After Refinement" value={stats.found_after_refinement} colorClass="text-blue-500" bgClass="bg-blue-50" borderClass="border-blue-100" />
            <MetricItem icon={FileSearch} title="Found via Workaround" value={stats.found_via_workaround} colorClass="text-orange-500" bgClass="bg-orange-50" borderClass="border-orange-100" />

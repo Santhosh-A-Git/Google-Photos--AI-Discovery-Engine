@@ -74,6 +74,15 @@ const ProblemLandscape = () => {
           <li><strong>Retrieval Relevance:</strong> 1 = general, 3 = related retrieval, 5 = directly about vague-memory</li>
           <li><strong>Outcome Impact:</strong> 1 = minor inconvenience, 3 = repeated effort, 5 = retrieval failure/abandonment</li>
         </ul>
+        <div className="bg-white border border-slate-200 p-3 rounded-lg text-sm text-slate-700 font-mono mb-3 shadow-inner">
+          <strong>Example Calculation:</strong><br/>
+          Cluster: "Temporal Ambiguity in Queries"<br/>
+          Evidence Strength = 4 (High direct reports: 124 instances)<br/>
+          Source Diversity = 3 (3 unique platforms: Reddit, Play Store, Forums)<br/>
+          Retrieval Relevance = 5 (Directly targets vague-memory search failure)<br/>
+          Outcome Impact = 4 (Usually leads to task abandonment)<br/>
+          <strong>Priority Score: (4 + 3 + 5 + 4) / 4 = 4.0 / 5.0</strong>
+        </div>
         <div className="text-xs text-slate-500 italic">* Priority Score is a heuristic guide, not a mathematically rigorous business forecast.</div>
       </div>
       

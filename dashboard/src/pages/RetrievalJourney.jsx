@@ -60,60 +60,60 @@ export default function RetrievalJourney() {
   ];
 
   return (
-    <div className="p-8 max-w-4xl mx-auto pb-20 h-full overflow-y-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
-          <Search color="#10b981" size={32} />
+    <div className="p-4 max-w-5xl mx-auto h-full flex flex-col justify-center">
+      <div className="mb-4 text-center">
+        <h1 className="text-2xl font-bold text-slate-900 flex items-center justify-center gap-3">
+          <Search color="#10b981" size={24} />
           Retrieval Journey
         </h1>
-        <p className="text-slate-900 font-medium mt-2 text-lg">The step-by-step breakdown of how a vague memory translates to retrieval failure or success.</p>
+        <p className="text-slate-900 font-medium mt-1 text-sm">The step-by-step breakdown of how a vague memory translates to retrieval failure or success.</p>
       </div>
 
-      <div className="space-y-4 relative">
+      <div className="space-y-1 relative flex-1 flex flex-col justify-center">
         {/* Vertical Line */}
         <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-slate-200 -translate-x-1/2 z-0 hidden md:block"></div>
 
         {steps.map((step, idx) => (
-          <div key={idx} className="relative z-10 flex flex-col md:flex-row items-center justify-center gap-6">
-            <div className={`w-full md:w-[700px] bg-white p-6 rounded-xl border ${step.color} shadow-sm relative`}>
-              <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                <div className="flex items-center gap-3">
-                  {step.icon}
-                  <h2 className="text-xl font-bold text-slate-800">{step.title}</h2>
+          <div key={idx} className="relative z-10 flex flex-col md:flex-row items-center justify-center gap-2">
+            <div className={`w-full md:w-[700px] bg-white p-3 rounded-xl border ${step.color} shadow-sm relative`}>
+              <div className="flex items-center justify-between mb-2 border-b border-slate-100 pb-1">
+                <div className="flex items-center gap-2">
+                  {React.cloneElement(step.icon, { size: 18 })}
+                  <h2 className="text-sm font-bold text-slate-800">{step.title}</h2>
                 </div>
-                <div className="flex gap-2">
-                  <span className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                <div className="flex gap-1">
+                  <span className="bg-slate-100 text-slate-600 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
                     Confidence: {step.confidence}
                   </span>
-                  <span className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                  <span className="bg-slate-100 text-slate-600 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
                     Evidence: {step.evidenceCount}
                   </span>
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div>
-                  <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Observed Behaviour</h3>
-                  <p className="text-sm font-medium text-slate-800 bg-white p-3 rounded-lg border border-slate-100 h-full">{step.behavior}</p>
+                  <h3 className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Observed Behaviour</h3>
+                  <p className="text-xs font-medium text-slate-800 bg-white p-2 rounded-lg border border-slate-100 h-full">{step.behavior}</p>
                 </div>
                 <div>
-                  <h3 className="text-[10px] font-bold text-rose-500 uppercase tracking-wider mb-2">Potential Failure</h3>
-                  <p className="text-sm font-medium text-rose-900 bg-rose-50 p-3 rounded-lg border border-rose-100 h-full">{step.failure}</p>
+                  <h3 className="text-[9px] font-bold text-rose-500 uppercase tracking-wider mb-1">Potential Failure</h3>
+                  <p className="text-xs font-medium text-rose-900 bg-rose-50 p-2 rounded-lg border border-rose-100 h-full">{step.failure}</p>
                 </div>
               </div>
             </div>
             
             {idx < steps.length - 1 && (
-              <div className="hidden md:flex flex-col items-center justify-center absolute -bottom-10 left-1/2 -translate-x-1/2 z-20">
-                <div className="bg-white p-1 rounded-full border border-slate-200 shadow-sm">
-                  <ArrowDown className="text-slate-400" size={20} />
+              <div className="hidden md:flex flex-col items-center justify-center absolute -bottom-5 left-1/2 -translate-x-1/2 z-20">
+                <div className="bg-white p-0.5 rounded-full border border-slate-200 shadow-sm">
+                  <ArrowDown className="text-slate-400" size={12} />
                 </div>
               </div>
             )}
             
             {idx < steps.length - 1 && (
-              <div className="md:hidden flex justify-center py-2">
-                <ArrowDown className="text-slate-300" size={24} />
+              <div className="md:hidden flex justify-center py-0.5">
+                <ArrowDown className="text-slate-300" size={16} />
               </div>
             )}
           </div>
