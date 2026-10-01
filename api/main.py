@@ -13,8 +13,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.database.db_manager import SessionLocal
 from src.database.models import Conversation, Insight, ProblemCluster, Opportunity
-from src.processing.vector_pipeline import get_chroma_collection, embedder
-from src.processing.groq_synthesizer import generate_global_report, generate_rag_answer
 
 app = FastAPI(title="Google Photos AI Discovery Engine API")
 
@@ -70,6 +68,7 @@ def get_global_report():
             "outcome": i.retrieval_outcome
         } for i in insights]
         
+        from src.processing.groq_synthesizer import generate_global_report
         report = generate_global_report(data)
         
         # Cache it to avoid rate limits on subsequent clicks
@@ -182,6 +181,7 @@ def get_insights(limit: int = 50):
 @app.post("/api/search")
 def search_insights(query: SearchQuery):
     try:
+        from src.processing.vector_pipeline import get_chroma_collection, embedder
         collection = get_chroma_collection()
         query_embedding = embedder.encode(query.query).tolist()
         
@@ -230,6 +230,7 @@ def search_insights(query: SearchQuery):
         
         ai_answer = ""
         if raw_documents:
+            from src.processing.groq_synthesizer import generate_rag_answer
             ai_answer = generate_rag_answer(query.query, raw_documents[:5])
         else:
             ai_answer = "No relevant context found in the database to answer this query."
