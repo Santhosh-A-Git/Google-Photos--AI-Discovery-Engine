@@ -3,55 +3,35 @@ import { UserCheck, Target, AlertCircle, CheckCircle, XCircle } from 'lucide-rea
 
 export default function InterviewHypotheses() {
   const [clusters, setClusters] = useState([]);
+  const [opportunities, setOpportunities] = useState([]);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/clusters`)
       .then(res => res.json())
       .then(data => setClusters(data))
       .catch(err => console.error(err));
+
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/opportunities`)
+      .then(res => res.json())
+      .then(data => setOpportunities(data))
+      .catch(err => console.error(err));
   }, []);
 
-  // Map clusters to hypothesis structure dynamically
+  // Map clusters and opportunities to hypothesis structure dynamically
   const hypotheses = clusters.map((c, i) => {
-    // Generate some contextual questions based on the problem title
-    let question = "Tell me about the last photo you knew existed but couldn't find. What exactly did you remember?";
-    let support = "User recalls contextual details but not exact metadata like date.";
-    let falsify = "User remembers date and metadata clearly, but retrieval still fails because results are irrelevant.";
-    let segment = "Occasion-driven retrievers";
-
-    if (c.title.includes("Temporal") || c.title.includes("Time")) {
-      question = "When you search for photos from 'years ago', how do you usually specify the time if you don't know the exact year?";
-      support = "User tries searching with fuzzy phrases like 'college years' and fails.";
-      falsify = "Users prefer manual scrolling over searching for old photos anyway.";
-      segment = "Time-uncertain retrievers";
-    } else if (c.title.includes("Screenshot")) {
-      question = "How do you currently retrieve an old screenshot of a receipt or note?";
-      support = "User describes manual endless scrolling in the Screenshots folder.";
-      falsify = "Users say they just search for the text in the screenshot and it works.";
-      segment = "Productivity/Utility users";
-    } else if (c.title.includes("Cross-Platform")) {
-      question = "When a friend sends you a photo on WhatsApp, how do you find it 3 months later?";
-      support = "User searches by the friend's name or guesses the download date and gives up.";
-      falsify = "User consistently creates specific albums for downloaded media immediately.";
-      segment = "Social sharers";
-    } else if (c.title.includes("Facial")) {
-      question = "Have you ever tried to find a photo of a specific person and couldn't, even though you know it's there?";
-      support = "User describes situations where the face was partially hidden or in costume.";
-      falsify = "Failure is due to the user misremembering who was in the photo, not AI failure.";
-      segment = "Event-based retrievers";
-    }
+    const opp = opportunities.find(o => o.cluster_id === c.id);
 
     return {
       id: `H${i + 1}`,
       title: c.statement || c.title,
       evidenceCount: c.evidence_count,
-      diversity: `${c.independent_source_count} unique users`,
+      diversity: `${c.independent_source_count} unique sources`,
       confidence: c.confidence_score,
-      segment: segment,
+      segment: opp ? opp.affected_users : "Unknown Users",
       scenario: c.situation,
-      question: question,
-      wouldSupport: support,
-      wouldFalsify: falsify
+      question: opp ? opp.core_hypothesis : "Hypothesis missing",
+      wouldSupport: opp ? opp.proposed_solution : "Solution missing",
+      wouldFalsify: opp ? opp.risks : "Risks missing"
     };
   });
 
@@ -62,7 +42,7 @@ export default function InterviewHypotheses() {
           <UserCheck color="#6366f1" size={32} />
           Interview Hypotheses
         </h1>
-        <p className="text-slate-900 font-medium mt-2 text-lg">Targeted primary research questions generated from vague-memory retrieval evidence.</p>
+        <p className="text-slate-900 font-medium mt-2 text-lg">Targeted primary research questions generated directly from our 1,403 insights.</p>
       </div>
 
       <div className="grid grid-cols-1 gap-8">
@@ -95,7 +75,7 @@ export default function InterviewHypotheses() {
 
               <div className="flex flex-col justify-between space-y-6">
                 <div>
-                  <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider mb-2 flex items-center gap-2"><UserCheck size={14}/> Primary Interview Question</h3>
+                  <h3 className="text-xs font-black text-indigo-400 uppercase tracking-wider mb-2 flex items-center gap-2"><UserCheck size={14}/> Core AI Hypothesis</h3>
                   <p className="text-lg font-bold text-indigo-900 bg-indigo-50/50 p-5 rounded-xl border border-indigo-100 italic">
                     "{h.question}"
                   </p>
@@ -105,7 +85,7 @@ export default function InterviewHypotheses() {
                   <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex gap-3">
                     <CheckCircle className="text-emerald-500 shrink-0 mt-0.5" size={16} />
                     <div>
-                      <h4 className="text-xs font-bold text-emerald-800 uppercase mb-1">What would support it</h4>
+                      <h4 className="text-xs font-bold text-emerald-800 uppercase mb-1">Proposed Solution</h4>
                       <p className="text-sm text-emerald-900 leading-relaxed">{h.wouldSupport}</p>
                     </div>
                   </div>
@@ -113,7 +93,7 @@ export default function InterviewHypotheses() {
                   <div className="bg-rose-50 p-4 rounded-xl border border-rose-100 flex gap-3">
                     <XCircle className="text-rose-500 shrink-0 mt-0.5" size={16} />
                     <div>
-                      <h4 className="text-xs font-bold text-rose-800 uppercase mb-1">What would falsify it</h4>
+                      <h4 className="text-xs font-bold text-rose-800 uppercase mb-1">Execution Risks</h4>
                       <p className="text-sm text-rose-900 leading-relaxed">{h.wouldFalsify}</p>
                     </div>
                   </div>

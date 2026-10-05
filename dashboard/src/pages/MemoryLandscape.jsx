@@ -14,10 +14,17 @@ const MemoryLandscape = () => {
     total_in_scope: 0
   });
 
+  const [globalReport, setGlobalReport] = useState(null);
+
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/landscape`)
       .then(res => res.json())
       .then(d => setData(d))
+      .catch(err => console.error(err));
+
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/global-report`)
+      .then(res => res.json())
+      .then(d => setGlobalReport(d))
       .catch(err => console.error(err));
   }, []);
 
@@ -103,21 +110,16 @@ const MemoryLandscape = () => {
 
       <div className="mt-8 bg-slate-50 p-6 rounded-xl border border-slate-200">
         <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <span>⚠️</span> Recurring Missing Retrieval Clues
+          <span>⚠️</span> Recurring Missing Retrieval Clues (System Verified)
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
-            <h3 className="font-bold text-slate-700">Exact Dates</h3>
-            <p className="text-sm text-slate-500 mt-1">Users rarely remember the exact month or year, leading to failure when scrolling timeline or using time constraints.</p>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
-            <h3 className="font-bold text-slate-700">Specific Albums</h3>
-            <p className="text-sm text-slate-500 mt-1">Users forget if the photo was ever added to a named album, rendering album navigation useless.</p>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
-            <h3 className="font-bold text-slate-700">Filenames / Searchable Tags</h3>
-            <p className="text-sm text-slate-500 mt-1">Users do not know the exact textual tags the system requires (e.g. "Receipt" vs "Bill").</p>
-          </div>
+        <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-100">
+          {globalReport ? (
+            <p className="text-base text-slate-700 font-medium leading-relaxed whitespace-pre-wrap">
+              {globalReport.forgotten_landscape}
+            </p>
+          ) : (
+            <p className="text-slate-400 italic">Synthesizing global landscape...</p>
+          )}
         </div>
       </div>
     </div>

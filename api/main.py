@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import sys
 import os
-from sqlalchemy import func
+from sqlalchemy import func, or_
 import math
 from dotenv import load_dotenv
 
@@ -110,7 +110,7 @@ def get_stats():
         
         # Evidence Types
         direct_evidence = session.query(Insight).filter(Insight.evidence_strength == "HIGH").count()
-        directional_evidence = session.query(Insight).filter(Insight.evidence_strength != "HIGH").count()
+        directional_evidence = total_insights - direct_evidence
         
         # Source Diversity
         unique_authors = session.query(Insight.conversation_id).distinct().count() # Proxy for authors
@@ -122,7 +122,7 @@ def get_stats():
         found_via_workaround = session.query(Insight).filter(Insight.result_status.in_(["FOUND_VIA_WORKAROUND", "FOUND_USING_WORKAROUND"])).count()
         not_found = session.query(Insight).filter(Insight.result_status == "NOT_FOUND").count()
         abandoned = session.query(Insight).filter(Insight.result_status == "ABANDONED").count()
-        unknown = session.query(Insight).filter(Insight.result_status.in_(["UNKNOWN", None])).count()
+        unknown = session.query(Insight).filter(or_(Insight.result_status == "UNKNOWN", Insight.result_status.is_(None))).count()
         
         # Failures breakdown
         failures = session.query(
@@ -252,7 +252,10 @@ def search_insights(query: SearchQuery):
             "results": formatted_results
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return {
+            "ai_answer": f"System limitation: Failed to generate AI synthesis ({str(e)}). Please review the raw evidence below.",
+            "results": formatted_results if 'formatted_results' in locals() else []
+        }
 
 @app.get("/api/landscape")
 def get_landscape():
