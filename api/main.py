@@ -42,12 +42,6 @@ import json
 @app.get("/api/global-report")
 def get_global_report():
     cache_file = "global_report_cache.json"
-    if os.path.exists(cache_file):
-        try:
-            with open(cache_file, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except:
-            pass
 
     session = SessionLocal()
     try:
