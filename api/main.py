@@ -51,11 +51,12 @@ def get_global_report():
 
     session = SessionLocal()
     try:
-        # Only query a sample of IN_SCOPE insights to prevent exceeding LLM context and truncating JSON
-        insights = session.query(Insight).filter(Insight.scope_status == "IN_SCOPE").limit(10).all()
-        if not insights:
+        # Synthesize from Problem Clusters and Opportunities for a true Global Report
+        clusters = session.query(ProblemCluster).all()
+        opps = session.query(Opportunity).all()
+        if not clusters:
             return {
-                "in_scope_scenarios": "No in-scope insights available yet.",
+                "in_scope_scenarios": "No clusters available yet.",
                 "remembered_landscape": "Data unavailable.",
                 "forgotten_landscape": "Data unavailable.",
                 "search_behaviors": "Data unavailable.",
@@ -64,14 +65,15 @@ def get_global_report():
             }
             
         data = [{
-            "id": i.id,
-            "scenario": i.retrieval_scenario,
-            "remembered": i.remembered_clues,
-            "forgotten": i.forgotten_clues,
-            "failure": i.failure_type,
-            "workaround": i.workaround,
-            "outcome": i.retrieval_outcome
-        } for i in insights]
+            "id": c.id,
+            "title": c.title,
+            "statement": c.statement,
+            "situation": c.situation,
+            "remembered": c.remembered_info,
+            "forgotten": c.missing_info,
+            "failure": c.typical_failure,
+            "opportunities": [o.opportunity_area for o in opps if o.cluster_id == c.id]
+        } for c in clusters]
         
         report = generate_global_report(data)
         
@@ -115,12 +117,12 @@ def get_stats():
         independent_source_types = session.query(Conversation.source).join(Insight, Insight.conversation_id == Conversation.id).distinct().count()
         
         # Outcomes breakdown (using result_status field that we mapped)
-        found_immediately = session.query(Insight).filter(Insight.result_status == "FOUND_IMMEDIATELY").count()
+        found_immediately = session.query(Insight).filter(Insight.result_status.in_(["FOUND_IMMEDIATELY", "FOUND"])).count()
         found_after_refinement = session.query(Insight).filter(Insight.result_status == "FOUND_AFTER_REFINEMENT").count()
-        found_via_workaround = session.query(Insight).filter(Insight.result_status == "FOUND_VIA_WORKAROUND").count()
+        found_via_workaround = session.query(Insight).filter(Insight.result_status.in_(["FOUND_VIA_WORKAROUND", "FOUND_USING_WORKAROUND"])).count()
         not_found = session.query(Insight).filter(Insight.result_status == "NOT_FOUND").count()
         abandoned = session.query(Insight).filter(Insight.result_status == "ABANDONED").count()
-        unknown = session.query(Insight).filter(Insight.result_status == "UNKNOWN").count()
+        unknown = session.query(Insight).filter(Insight.result_status.in_(["UNKNOWN", None])).count()
         
         # Failures breakdown
         failures = session.query(

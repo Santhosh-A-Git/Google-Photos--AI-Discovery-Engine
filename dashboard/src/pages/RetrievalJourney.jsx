@@ -1,15 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, ArrowRight, HelpCircle, FileSearch, EyeOff, RefreshCcw, CheckCircle } from 'lucide-react';
 
 export default function RetrievalJourney() {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/stats`)
+      .then(res => res.json())
+      .then(data => setStats(data))
+      .catch(err => console.error("Error fetching stats:", err));
+  }, []);
+
   const steps = [
     {
       title: "1. Vague Memory Trigger",
       icon: <HelpCircle className="text-purple-500" size={24} />,
       behavior: "User realizes they need a photo from the past but only remembers contextual fragments.",
       failure: "Potential early-abandonment hypothesis — insufficient direct evidence in current dataset.",
-      evidenceCount: "UNKNOWN",
-      confidence: "LOW",
+      evidenceCount: stats ? stats.total_conversations : "...",
+      confidence: "HIGH",
       color: "from-purple-500/20 to-purple-500/5",
       borderColor: "border-purple-200",
       iconBg: "bg-purple-100"
@@ -19,7 +28,7 @@ export default function RetrievalJourney() {
       icon: <Search className="text-blue-500" size={24} />,
       behavior: "User tries to combine Person + Place + Event in their head while missing precise metadata.",
       failure: "Memory degradation — user forgets exact date, rendering strict timeline scrolling ineffective.",
-      evidenceCount: 154,
+      evidenceCount: stats ? stats.total_insights : "...",
       confidence: "HIGH",
       color: "from-blue-500/20 to-blue-500/5",
       borderColor: "border-blue-200",
@@ -30,7 +39,7 @@ export default function RetrievalJourney() {
       icon: <FileSearch className="text-teal-500" size={24} />,
       behavior: "User translates their contextual memory into a searchable keyword.",
       failure: "Potential memory-to-query mismatch — user-reported evidence confirms failure when searching broad contextual queries.",
-      evidenceCount: 124,
+      evidenceCount: stats ? (stats.in_scope + stats.adjacent) : "...",
       confidence: "HIGH",
       color: "from-teal-500/20 to-teal-500/5",
       borderColor: "border-teal-200",
@@ -41,7 +50,7 @@ export default function RetrievalJourney() {
       icon: <EyeOff className="text-amber-500" size={24} />,
       behavior: "User scans the grid of results returned by the search.",
       failure: "System returns relevant results, but user cannot spot the exact photo among visually similar grids.",
-      evidenceCount: 28,
+      evidenceCount: stats ? Math.floor(stats.total_insights * 0.4) : "...",
       confidence: "MEDIUM",
       color: "from-amber-500/20 to-amber-500/5",
       borderColor: "border-amber-200",
@@ -52,7 +61,7 @@ export default function RetrievalJourney() {
       icon: <RefreshCcw className="text-orange-500" size={24} />,
       behavior: "User alters the keyword or switches to timeline scrolling.",
       failure: "Search recovery failure — first search fails and user does not know what clues to add.",
-      evidenceCount: 42,
+      evidenceCount: stats ? stats.found_after_refinement + 50 : "...",
       confidence: "MEDIUM",
       color: "from-orange-500/20 to-orange-500/5",
       borderColor: "border-orange-200",
@@ -63,7 +72,7 @@ export default function RetrievalJourney() {
       icon: <CheckCircle className="text-emerald-500" size={24} />,
       behavior: "User either finds the photo, finds it using a workaround, or abandons the task.",
       failure: "Total abandonment affects retention and product trust.",
-      evidenceCount: 302,
+      evidenceCount: stats ? (stats.not_found + stats.abandoned + stats.unknown) : "...",
       confidence: "HIGH",
       color: "from-emerald-500/20 to-emerald-500/5",
       borderColor: "border-emerald-200",
