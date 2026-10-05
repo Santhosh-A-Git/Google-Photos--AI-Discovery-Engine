@@ -44,7 +44,7 @@ def get_groq_client():
     return Groq(api_key=api_key)
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
-def call_groq_synthesis(client, aggregated_data_string, model="llama3-70b-8192"):
+def call_groq_synthesis(client, aggregated_data_string, model="openai/gpt-oss-120b"):
     safe_data = aggregated_data_string[:25000]
     
     chat_completion = client.chat.completions.create(
@@ -181,7 +181,7 @@ def generate_rag_answer(query: str, documents: list):
                     "content": f"Context Evidence:\n{context}\n\nQuestion: {query}",
                 }
             ],
-            model="llama3-70b-8192",
+            model="qwen/qwen3.8-27b",
             temperature=0.2,
         )
         return chat_completion.choices[0].message.content
