@@ -21,15 +21,7 @@ const ProblemLandscape = () => {
     return clusters;
   };
 
-  const calculateScore1to5 = (cluster) => {
-    const eScore = cluster.evidence_count > 100 ? 5 : cluster.evidence_count > 50 ? 4 : cluster.evidence_count > 20 ? 3 : 2;
-    const sScore = cluster.independent_source_count > 30 ? 5 : cluster.independent_source_count > 10 ? 4 : cluster.independent_source_count > 3 ? 3 : 2;
-    // Average them roughly to get a 1-5 scale
-    const finalScore = ((eScore + sScore) / 2).toFixed(1);
-    return finalScore;
-  };
-
-  const sortedClusters = [...getFilteredClusters()].sort((a, b) => calculateScore1to5(b) - calculateScore1to5(a));
+  const sortedClusters = [...getFilteredClusters()].sort((a, b) => (b.priority_score || 0) - (a.priority_score || 0));
 
   return (
     <div className="p-8 max-w-7xl mx-auto h-full flex flex-col pb-20">
@@ -69,19 +61,15 @@ const ProblemLandscape = () => {
           To ensure problem prioritization is driven by validated user pain points rather than frequency bias, the AI Discovery Engine calculates a weighted 1-5 priority score based on:
         </p>
         <ul className="text-sm text-slate-700 space-y-1 ml-4 list-disc mb-3">
-          <li><strong>Evidence Strength:</strong> 1 = inference only, 3 = contextual, 5 = explicit direct user statement</li>
-          <li><strong>User Diversity:</strong> Score based on the number of unique users reporting the issue</li>
-          <li><strong>Retrieval Relevance:</strong> 1 = general, 3 = related retrieval, 5 = directly about vague-memory</li>
-          <li><strong>Outcome Impact:</strong> 1 = minor inconvenience, 3 = repeated effort, 5 = retrieval failure/abandonment</li>
+          <li><strong>Evidence Weight:</strong> 0.6 * log10(Total Evidence Count + 1)</li>
+          <li><strong>Source Diversity:</strong> 0.4 * (Unique Platforms / 4.0)</li>
         </ul>
         <div className="bg-white border border-slate-200 p-3 rounded-lg text-sm text-slate-700 font-mono mb-3 shadow-inner">
           <strong>Example Calculation:</strong><br/>
           Cluster: "Temporal Ambiguity in Queries"<br/>
-          Evidence Strength = 4 (High direct reports: 124 instances)<br/>
-          User Diversity = 3 (30 unique user accounts reporting the issue)<br/>
-          Retrieval Relevance = 5 (Directly targets vague-memory search failure)<br/>
-          Outcome Impact = 4 (Usually leads to task abandonment)<br/>
-          <strong>Priority Score: (4 + 3 + 5 + 4) / 4 = 4.0 / 5.0</strong>
+          Evidence Count (E) = 124 instances<br/>
+          Unique Platforms (S) = 3 sources<br/>
+          <strong>Priority Score: (0.6 * log10(125)) + (0.4 * 0.75) = (0.6 * 2.09) + 0.3 = 1.25 + 0.3 = 1.55</strong>
         </div>
         <div className="text-xs text-slate-500 italic">* Priority Score is a heuristic guide, not a mathematically rigorous business forecast.</div>
       </div>
@@ -95,7 +83,7 @@ const ProblemLandscape = () => {
                 <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-slate-200">📊 Evidence: <strong>{cluster.evidence_count} observations</strong></span>
                 <span className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-slate-200">🌐 Users: <strong>{cluster.independent_source_count}</strong></span>
                 <span className="flex items-center gap-1 bg-teal-50 text-teal-800 font-bold px-2 py-1 rounded border border-teal-200">
-                  Priority Score: {calculateScore1to5(cluster)} / 5.0
+                  Priority Score: {cluster.priority_score}
                 </span>
               </div>
             </div>

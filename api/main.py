@@ -77,6 +77,10 @@ def get_global_report():
         
         report = generate_global_report(data)
         
+        # Override to guarantee exactly the 5 problem clusters are shown as opportunities
+        if report and isinstance(report, dict):
+            report["opportunities"] = "\n".join([f"- **{o.opportunity_area}**: Targets '{[c.title for c in clusters if c.id == o.cluster_id][0]}'" for o in opps])
+        
         # Cache it to avoid rate limits on subsequent clicks
         if report and "Error" not in report.get("in_scope_scenarios", ""):
             with open(cache_file, "w", encoding="utf-8") as f:
