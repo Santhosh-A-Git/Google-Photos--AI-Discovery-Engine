@@ -36,7 +36,7 @@ export default function PMQueries() {
   const generateReport = async () => {
     setReportStatus('loading');
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/global-report`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/global-report?t=${Date.now()}`);
       if (!res.ok) throw new Error("Backend global report failed");
       const data = await res.json();
       setGlobalReport(data || null);
